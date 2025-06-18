@@ -1,0 +1,57 @@
+diff --git a/components/mpas-framework/Makefile b/components/mpas-framework/Makefile
+index f92606987b..0383ef4868 100644
+--- a/components/mpas-framework/Makefile
++++ b/components/mpas-framework/Makefile
+@@ -588,8 +588,14 @@ endif
+ 		LIBS += $(NCLIBF)
+ 	endif # CHECK FOR NETCDF4
+ 	ifneq "$(NETCDFF)" ""
++ifneq ($(wildcard $(NETCDFF)/lib), )
++	NETCDFFLIBLOC = lib
++endif
++ifneq ($(wildcard $(NETCDFF)/lib64), )
++	NETCDFFLIBLOC = lib64
++endif
+ 		FCINCLUDES += -I$(NETCDFF)/include
+-		LIBS += -L$(NETCDFF)/$(NETCDFLIBLOC)
++		LIBS += -L$(NETCDFF)/$(NETCDFFLIBLOC)
+ 		LIBS += $(NCLIBF)
+ 	endif
+ 	LIBS += $(NCLIB)
+@@ -608,6 +614,8 @@ endif
+ 	LIBS += -L$(PNETCDF)/$(PNETCDFLIBLOC) -lpnetcdf
+ endif
+ 
++LIBS += -L$(HENSON)/lib -lhenson-pmpi -lhenson
++
+ ifeq "$(USE_LAPACK)" "true"
+ ifndef LAPACK
+ $(error LAPACK is not set.  Please set LAPACK to the LAPACK install directory when USE_LAPACK=true)
+@@ -768,6 +776,7 @@ ifneq "$(PICFLAG)" ""
+ 	CFLAGS += $(PICFLAG)
+ 	CXXFLAGS += $(PICFLAG)
+ 	LDFLAGS += $(PICFLAG)
++    LDFLAGS += -shared -Wl,-u,henson_set_contexts,-u,henson_set_namemap
+ 	SHAREDLIB_MESSAGE="Position-independent code was generated."
+ else
+ $(error Position-independent code was requested but PIC flags are not available. Please add PIC flags for the '$(BUILD_TARGET)' target)
+@@ -1055,6 +1064,7 @@ drver:  $(AUTOCLEAN_DEPS) framework dycore
+ 
+ mpas: $(AUTOCLEAN_DEPS) framework dycore drver
+ 	$(LINKER) $(LDFLAGS) -o $(EXE_NAME) $(FWPATH)/driver/*.o -L$(FWPATH) -Lsrc -ldycore -lops -lframework $(LIBS) -I./external/esmf_time_f90 -L$(FWPATH)/external/esmf_time_f90 -lesmf_time
++	$(LINKER) $(LDFLAGS) -o $(EXE_NAME).so $(FWPATH)/driver/*.o -L$(FWPATH) -Lsrc -ldycore -lops -lframework $(LIBS) -I./external/esmf_time_f90 -L$(FWPATH)/external/esmf_time_f90 -lesmf_time
+ 
+ framework:
+ 	cd $(FWPATH); $(MAKE) \
+diff --git a/components/mpas-framework/src/driver/mpas.F b/components/mpas-framework/src/driver/mpas.F
+index 66cfbfed30..60fa57d7ba 100644
+--- a/components/mpas-framework/src/driver/mpas.F
++++ b/components/mpas-framework/src/driver/mpas.F
+@@ -20,6 +20,6 @@ program mpas
+ 
+    call mpas_finalize(corelist, domain)
+ 
+-   stop
++!  stop
+ 
+ end program mpas

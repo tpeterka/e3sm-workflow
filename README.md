@@ -93,52 +93,130 @@ source /path_to/e3sm-workflow/load-env.sh
 
 -----
 
-## Generating an E3SM ocean test case
-
-Edit the template in `ccase1.sh` according to the instructions [here](https://docs.e3sm.org/running-e3sm-guide/guide-prior-to-production/)
-Set the `MACHINE`, `PROJECT`, `CASE_NAME`, `CASE_ROOT`, `CODE_ROOT`.
-For the first time, set the `do_*` flags as follows:
-```
-do_fetch_code=true
-do_create_newcase=true
-do_case_setup=true
-do_case_build=true
-do_case_submit=false
-```
-Subsequent times, set various flags, eg. `do_fetch_code`, to `false`.
-
-Run the script:
-```
-./run.ccase1.sh
-```
-
------
-
-# create case manually
+## Clone E3SM repository
 
 ```
-/path/to/E3SMv3/code/latest/cime/scripts/create_newcase --case ccase1 --output-root "${CASEDIR}" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+git clone https://github.com/E3SM-Project/E3SM
+cd E3SM
+git submodule update --init --recursive
+```
+On a new machine, if you are denied permission to execute the `git submodule update --init --recursive` command, you
+need to copy your ssh public key to your github account:
+```
+cd ~/.ssh
+ls
+```
+If a public key doesn't exist:
+```
+ssh-keygen -t ed25519 -C "<your email address>"
+# press enter for all prompts
+```
+Copy the key to the clipboard, log into your account on github.com, edit your settings, and add the SSH key.
 
+Also first time only for a new git configuration, you may want to do:
+```
+git config --global user.email "<your email address>"
+git config --global user.name "<your name>"
 ```
 
 -----
 
-# Modify environment for building E3SM
+<!-- ## Generating an E3SM ocean test case -->
 
-Edit `<CASE_ROOT>/tests/<run>/case_scripts/.env_mach_specific (where
-CASE_ROOT and run (eg. XS_1x10_ndays) were provided in the run script above):
+<!-- Edit the template in `ccase1.sh` according to the instructions [here](https://docs.e3sm.org/running-e3sm-guide/guide-prior-to-production/) -->
+<!-- Set the `MACHINE`, `PROJECT`, `CASE_NAME`, `CASE_ROOT`, `CODE_ROOT`. -->
+<!-- For the first time, set the `do_*` flags as follows: -->
+<!-- ``` -->
+<!-- do_fetch_code=true -->
+<!-- do_create_newcase=true -->
+<!-- do_case_setup=true -->
+<!-- do_case_build=true -->
+<!-- do_case_submit=false -->
+<!-- ``` -->
+<!-- Subsequent times, set various flags, eg. `do_fetch_code`, to `false`. -->
 
-TBD
+<!-- Run the script: -->
+<!-- ``` -->
+<!-- ./run.ccase1.sh -->
+<!-- ``` -->
+
+<!-- ----- -->
+
+## Creating ocean test case `ccase`
+
+The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
+
+```
+/path/to/E3SM/code/latest/cime/scripts/create_newcase --case ccase1 --output-root "${CASEDIR}" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+
+```
 
 -----
 
-# Rebuild E3SM in the spack environment
+# (For Perlmutter) Modify environment for building E3SM
+
+Patch the environment xml file:
 
 ```
-source /path/to/e3sm-workflow/load-env.sh
-cd <CASE_ROOT>/tests/<run>/case_scripts
-./case_build --clean-all
+cd /path/to/E3SM/<case>
+patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch 
+```
+
+-----
+
+## Set up the case
+
+The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
+
+```
+cd /path/to/E3SM/<case>
+./case.setup
+```
+
+-----
+
+## (For Perlmutter) Add symlinks for compiler wrappers pointing to my mpich installation
+
+Add or use a `bin` directory to or in your `$PATH`
+Then add symlinks:
+
+```
+cd /path/to/bin
+ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpif90 ftn
+ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicc cc
+ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicxx CC
+```
+Confirm that the symlinks work:
+`which ftn`, `which cc`, `which CC`
+
+-----
+
+## Build E3SM
+
+The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
+
+The first time, patch the E3SM makefiles:
+
+```
+cd /path/to/E3SM
+git apply /path/to/e3sm-workflow/E3SM.patch
+```
+
+Then proceed to build E3SM:
+
+```
+cd /path/to/E3SM/<case>
+./case_build --clean-all   # optional, if rebuilding
 ./case_build
 ```
-The build log and executable are located in `<CASE_ROOT>/build`.
+The build logs and executable are located in `/path/to/E3SM/<case>/<case>/bld`.
 
+-----
+
+# Run E3SM standalone (without a workflow) as a test
+
+salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+
+srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores   -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt 
+
+-----
