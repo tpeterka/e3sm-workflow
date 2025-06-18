@@ -1,4 +1,4 @@
-# Instructions for Building and Running E3SM (ocean component) to Run in a Workflow
+# Instructions for Building E3SM (ocean component) and running in a Workflow
 
 Installation is done through Spack.
 If you don't have Spack installed or if Spack is new to you, go [here](https://spack.readthedocs.io/en/latest/) first.
@@ -77,7 +77,7 @@ spack repo add /path_to/e3sm-workflow/mpas-o-scorpio
 
 ## Setting up Spack environment
 
-### First time: create and load the Spack environment for MPAS-Ocean
+### First time: create and load the Spack environment
 
 ```
 cd /path_to/e3sm-workflow
@@ -85,7 +85,7 @@ source ./create-env.sh             # requires being in the same directory to wor
 source ./load-env.sh
 ```
 
-### Subsequent times: load the Spack environment for MPAS-Ocean
+### Subsequent times: load the Spack environment
 
 ```
 source /path_to/e3sm-workflow/load-env.sh
@@ -142,14 +142,16 @@ git config --global user.name "<your name>"
 
 <!-- ----- -->
 
-## Creating ocean test case `ccase`
+## Creating ocean test case (ccase)
 
 The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
 
 ```
-/path/to/E3SM/code/latest/cime/scripts/create_newcase --case ccase1 --output-root "${CASEDIR}" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+/path/to/E3SM/code/latest/cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
 
 ```
+
+Note: `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
 
 -----
 
