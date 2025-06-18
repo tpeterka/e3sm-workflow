@@ -1,5 +1,3 @@
-# e3sm-workflow
-
 # Instructions for Building and Running E3SM (ocean component) to Run in a Workflow
 
 Installation is done through Spack.
@@ -95,4 +93,52 @@ source /path_to/e3sm-workflow/load-env.sh
 
 -----
 
+## Generating an E3SM ocean test case
+
+Edit the template in `ccase1.sh` according to the instructions [here](https://docs.e3sm.org/running-e3sm-guide/guide-prior-to-production/)
+Set the `MACHINE`, `PROJECT`, `CASE_NAME`, `CASE_ROOT`, `CODE_ROOT`.
+For the first time, set the `do_*` flags as follows:
+```
+do_fetch_code=true
+do_create_newcase=true
+do_case_setup=true
+do_case_build=true
+do_case_submit=false
+```
+Subsequent times, set various flags, eg. `do_fetch_code`, to `false`.
+
+Run the script:
+```
+./run.ccase1.sh
+```
+
+-----
+
+# create case manually
+
+```
+/path/to/E3SMv3/code/latest/cime/scripts/create_newcase --case ccase1 --output-root "${CASEDIR}" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+
+```
+
+-----
+
+# Modify environment for building E3SM
+
+Edit `<CASE_ROOT>/tests/<run>/case_scripts/.env_mach_specific (where
+CASE_ROOT and run (eg. XS_1x10_ndays) were provided in the run script above):
+
+TBD
+
+-----
+
+# Rebuild E3SM in the spack environment
+
+```
+source /path/to/e3sm-workflow/load-env.sh
+cd <CASE_ROOT>/tests/<run>/case_scripts
+./case_build --clean-all
+./case_build
+```
+The build log and executable are located in `<CASE_ROOT>/build`.
 

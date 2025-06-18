@@ -6,7 +6,7 @@ spack env deactivate > /dev/null 2>&1
 spack env activate $SPACKENV
 echo "activated spack environment $SPACKENV"
 
-# set spack locations and vars for building mpas-o
+# set spack locations and vars for building
 export MPAS_EXTERNAL_LIBS=""
 export MPAS_EXTERNAL_LIBS="${MPAS_EXTERNAL_LIBS} -lgomp"
 export NETCDF=`spack location -i netcdf-c`
@@ -23,8 +23,17 @@ export MPAS_SHELL=/bin/bash
 export CORE=ocean
 export SHAREDLIB=true
 export PROFILE_PRELIB="-L$HENSON/lib -lhenson-pmpi"
+
+# set E3SM case setup env vars
+export NETCDF_PATH=$NETCDF
+export PNETCDF_PATH=$PNETCDF
+export HDF5_ROOT=$HDF5
+export CC=mpicc
+export CXX=mpicxx
+export FC=mpif90
 echo "environment variables are set for building E3SM"
 
+# set load library paths for running
 set LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$NETCDF/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$PNETCDF/lib:$LD_LIBRARY_PATH
@@ -35,6 +44,7 @@ export LD_LIBRARY_PATH=$LOWFIVE/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$HENSON/lib:$LD_LIBRARY_PATH
 echo "library paths are set for running E3SM"
 
+# set python path
 export SPACK=`spack location -r`
 export PYTHONPATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/lib/python3.11/site-packages:/pscratch/sd/t/tpeterka/software/spack/var/spack/environments/mpas/.spack-env/view/lib:$PYTHONPATH
 export PATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin:$PATH
