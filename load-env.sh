@@ -36,6 +36,7 @@ echo "environment variables are set for building E3SM"
 # set load library paths for running
 set LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$NETCDF/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$NETCDF/lib64:$LD_LIBRARY_PATH  # for perlmutter
 export LD_LIBRARY_PATH=$PNETCDF/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$NETCDFF/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$HDF5/lib:$LD_LIBRARY_PATH
