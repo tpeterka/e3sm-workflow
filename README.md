@@ -68,10 +68,12 @@ git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
 ```
 
+<!--
 Mpas-o-scorpio
 ```
 spack repo add /path_to/e3sm-workflow/mpas-o-scorpio
 ```
+-->
 
 -----
 
@@ -147,7 +149,8 @@ git config --global user.name "<your name>"
 The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
 
 ```
-/path/to/E3SM/code/latest/cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+cd /path/to/E3SM/code/latest/cime/scripts
+./create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
 
 ```
 
@@ -217,8 +220,13 @@ The build logs and executable are located in `/path/to/E3SM/<case>/<case>/bld`.
 
 # Run E3SM standalone (without a workflow) as a test
 
+```
+unset HDF5_VOL_CONNECTOR
+unset HDF5_PLUGIN_PATH
+cd /path/to/E3SM/<case>/<case>/run
+mkdir timing/checkpoints      # first time only
 salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
-
-srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores   -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt 
+srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores   -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
+```
 
 -----

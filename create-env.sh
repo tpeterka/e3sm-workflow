@@ -23,7 +23,7 @@ spack add henson+python+mpi-wrappers
 spack add netcdf-c@4.9+mpi build_system=cmake
 spack add parallel-netcdf
 spack add netcdf-fortran@4.5.3
-spack add mpas-o-scorpio+hdf5
+# spack add mpas-o-scorpio+hdf5
 
 # install everything in environment
 echo "installing dependencies in environment"
