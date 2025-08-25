@@ -1,0 +1,19 @@
+--- cmake_macros/old.universal.cmake	2025-08-25 13:09:14.000000000 -0700
++++ cmake_macros/universal.cmake	2025-08-22 12:28:30.000000000 -0700
+@@ -15,13 +15,13 @@
+ set(E3SM_LINK_WITH_FORTRAN "FALSE")
+ 
+ # Do not use any automatic settings for these
+-set(CMAKE_Fortran_FLAGS "")
++set(CMAKE_Fortran_FLAGS "-fPIC -DPIC")
+ set(CMAKE_Fortran_FLAGS_DEBUG "")
+ set(CMAKE_Fortran_FLAGS_RELEASE "")
+-set(CMAKE_C_FLAGS "")
++set(CMAKE_C_FLAGS "-fPIC -DPIC")
+ set(CMAKE_C_FLAGS_DEBUG "")
+ set(CMAKE_C_FLAGS_RELEASE "")
+-set(CMAKE_CXX_FLAGS "")
++set(CMAKE_CXX_FLAGS "-fPIC -DPIC")
+ set(CMAKE_CXX_FLAGS_DEBUG "")
+ set(CMAKE_CXX_FLAGS_RELEASE "")
+ set(CMAKE_Fortran_FORMAT_FIXED_FLAG "")

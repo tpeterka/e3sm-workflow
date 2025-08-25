@@ -160,11 +160,12 @@ Note: `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are als
 
 # (For Perlmutter) Modify environment for building E3SM
 
-Patch the environment xml file:
+Patch the environment xml file and the universal cmake file:
 
 ```
 cd /path/to/E3SM/<case>
-patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch 
+patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch
+patch universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 ```
 
 -----
@@ -211,8 +212,8 @@ Then proceed to build E3SM:
 
 ```
 cd /path/to/E3SM/<case>
-./case_build --clean-all   # optional, if rebuilding
-./case_build
+./case.build --clean-all   # optional, if rebuilding
+./case.build
 ```
 The build logs and executable are located in `/path/to/E3SM/<case>/<case>/bld`.
 
