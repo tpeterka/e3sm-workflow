@@ -125,7 +125,7 @@ git config --global user.name "<your name>"
 
 <!-- ## Generating an E3SM ocean test case -->
 
-<!-- Edit the template in `ccase1.sh` according to the instructions [here](https://docs.e3sm.org/running-e3sm-guide/guide-prior-to-production/) -->
+<!-- Edit the template in `run.ccase1.sh` according to the instructions [here](https://docs.e3sm.org/running-e3sm-guide/guide-prior-to-production/) -->
 <!-- Set the `MACHINE`, `PROJECT`, `CASE_NAME`, `CASE_ROOT`, `CODE_ROOT`. -->
 <!-- For the first time, set the `do_*` flags as follows: -->
 <!-- ``` -->
@@ -165,7 +165,7 @@ Patch the environment xml file and the universal cmake file:
 ```
 cd /path/to/E3SM/<case>
 patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch
-patch universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
+patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 ```
 
 -----
@@ -214,6 +214,10 @@ Then proceed to build E3SM:
 cd /path/to/E3SM/<case>
 ./case.build --clean-all   # optional, if rebuilding
 ./case.build
+make -C ccase1/bld/cmake-bld clean
+make -C ccase1/bld/cmake-bld VERBOSE=1
+mv <case>/bld/cmake-bld/cmake/cpl/e3sm_shared.so <case>/bld
+
 ```
 The build logs and executable are located in `/path/to/E3SM/<case>/<case>/bld`.
 
