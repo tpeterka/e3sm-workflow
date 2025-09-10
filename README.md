@@ -1,4 +1,4 @@
-# Instructions for Building E3SM (ocean component) and running in a Workflow
+# Instructions for Building E3SM (ocean component) and Running in a Workflow
 
 This repository provides an example of building and running E3SM coupled with a Python analysis task in an HPC in situ workflow.
 The E3SM code is an ocean test case, and the Python analysis code simply prints one of the ocean output variables.
@@ -49,7 +49,7 @@ export LD_LIBRARY_PATH=/pscratch/sd/t/tpeterkasoftware/mpich-4.3.0/install/lib:$
 
 source /path/to/spack/share/spack/setup-env.sh
 ```
-### Edit `~/.spack/packages.yaml` to use gcc 12.3.0 and my pre-installed mpich:
+### Edit `~/.spack/packages.yaml` to use gcc 12.3.0 and my pre-installed mpich
 
 (For Perlmutter)
 
@@ -97,7 +97,7 @@ Confirm that the symlinks work:
 
 ## Cloning this repository and setting up a Spack environment
 
-### Clone this repository.
+### Clone this repository
 
 ```
 git clone https://github.com/tpeterka/e3sm-workflow
@@ -107,26 +107,24 @@ git clone https://github.com/tpeterka/e3sm-workflow
 
 No environment should be active. Run `spack env status` to be sure.
 
-Add the LowFive repository to your Spack (not included with Spack by default).
+Add the LowFive repository to your Spack installation (not included with Spack by default).
 ```
 git clone https://github.com/diatomic/LowFive
 spack repo add LowFive
 ```
 
-Add the Wilkins repository to your Spack (not included with Spack by default).
+Add the Wilkins repository to your Spack installation (not included with Spack by default).
 ```
 git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
 ```
 
-<!--
-Mpas-o-scorpio
+Add the Mpas-o-scorpio repository to your Spack installation (not included with Spack by default).
 ```
 spack repo add /path/to/e3sm-workflow/mpas-o-scorpio
 ```
--->
 
-### Set up Spack environment
+### Set up the Spack environment
 
 First time: create and load the Spack environment
 
@@ -146,7 +144,7 @@ source /path/to/e3sm-workflow/load-env.sh
 
 ## Cloning the E3SM repository and setting up an ocean test case
 
-### Clone E3SM repository
+### Clone the E3SM repository
 
 ```
 git clone https://github.com/E3SM-Project/E3SM
@@ -202,7 +200,6 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ```
 cd /path/to/E3SM/code/latest/cime/scripts
 ./create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
-
 ```
 
 Note: (For Perlmutter) `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
@@ -259,7 +256,6 @@ cd /path/to/E3SM/<case>
 make -C ccase1/bld/cmake-bld clean          # then clean and make sequentially
 make -C ccase1/bld/cmake-bld VERBOSE=1      # VERBOSE=1 is optional
 mv <case>/bld/cmake-bld/cmake/cpl/e3sm_shared.so <case>/bld
-
 ```
 The build logs, executable, and shared object are located in `/path/to/E3SM/<case>/<case>/bld`.
 
@@ -269,7 +265,7 @@ The build logs, executable, and shared object are located in `/path/to/E3SM/<cas
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
-### Test that `e3sm.exe` was built correctly by running it.
+### Test that `e3sm.exe` was built correctly by running it standalone
 
 ```
 unset HDF5_VOL_CONNECTOR
@@ -301,7 +297,7 @@ Edit line 2 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the `path/to/E3SM
 
 Edit line 10 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the `path/to/e3sm-workflow/analysis.py` on your machine.
 
-Edit line 12 of `/path/to/e3sm-workflow/wilkins-config.yaml`, the first argument to `path/to/E3SM/<case>/<case>/run/<your_file.nc>` on your machine, and the second argument to the variable you wish to print.
+Edit line 12 of `/path/to/e3sm-workflow/wilkins-config.yaml`, the first argument to the `path/to/E3SM/<case>/<case>/run/<your_file.nc>` on your machine, and the second argument to the variable you wish to print.
 
 Edit line 6 of `/path/to/e3sm-workflow/wilkins-run.sh` to the `path/to/e3sm-workflow/wilkins-config.yaml` on your machine.
 
@@ -310,19 +306,23 @@ Change the settings of `passthru` and `metadata` on lines 8, 9, and 17, 18 of
 `path/to/e3sm-workflow/wilkins-config.yaml` as follows:
 
 file transfer:
-`passthru: 1`
-`metadata: 0`
+```
+passthru: 1
+metadata: 0
+```
 
 MPI message transfer:
-`passthru: 0`
-`metadata: 1`
+```
+passthru: 0
+metadata: 1
+```
 
 Because of the way NetCDF works, even for MPI data transfers, there needs to be a valid netCDF file on disk of the same name being read by
-the analysis code, otherwise the analysis code will fail. For the first execution, set `passthru: 1` and `metadata: 0`
+the analysis code, otherwise the analysis code will fail. For the first execution, use file mode
 so that a file is produced on disk, and then leave the file
-there. Afterwards you may set `passthru: 0` and `metadata: 1` for MPI mode.  Alternatively, you may copy the
+there. Afterwards you may use MPI mode.  Alternatively, you may copy the
 blank netcdf file `blank.nc` from the top level of the e3sm-workflow repository to the run directory
-and rename `blank.nc` to name of the file given in the first argument to the analysis code.
+and rename `blank.nc` to name of the file given in the first argument to the analysis code. Then you can use MPI mode immediately.
 
 -----
 
