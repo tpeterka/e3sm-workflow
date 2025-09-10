@@ -1,26 +1,58 @@
 # Instructions for Building E3SM (ocean component) and running in a Workflow
 
+This repository provides an example of building and running E3SM coupled with a Python analysis task in an HPC in situ workflow.
+The E3SM code is an ocean test case, and the Python analysis code simply prints one of the ocean output variables.
+The data transfer can be configured to either read/write files or exchange MPI messages through the system interconnect.
+The workflow is intended as a template to copy and modify to suit specific cases.
+
+These instructions have been tested on the Perlmutter CPU partition at NERSC.
+Other machines will be similar, but not tested.
+Instructions that are specific to Perlmutter have been noted.
+
 Installation is done through Spack.
 If you don't have Spack installed or if Spack is new to you, go [here](https://spack.readthedocs.io/en/latest/) first.
 The recommended compiler is gcc version 12.
 
+The instructions in this README are divided into the following main steps:
+
+- Preliminaries
+- Cloning this repository and setting up a spack environment
+- Cloning the E3SM repository and setting up an ocean test case
+- Building E3SM to run in a workflow
+- Testing the E3SM build
+- Configuring the workflow
+- Running the workflow
+
 -----
 
-## For Perlmutter:
+## Preliminaries
 
-Add to your `~/.bash_profile`:
-The version of mpi included with the Cray programming environment is too old.
+Preliminary steps include setting up your shell environment, loading/unloading
+modules, and configuring your spack installation.
+
+### Modify your bash profile
+
+(For Perlmutter)
+
+The version of MPI included with the Cray programming environment is too old.
 Use mpich built by me, and unload the Cray programming environment module.
 Match the compiler that I used to build my mpich.
-Also recommend to initialize your spack installation.
+This is also a good place to initialize your spack installation.
+
+Add to your `~/.bash_profile` or `~/.bashrc`:
+
 ```
 module unload PrgEnv-gnu/8.5.0
 module load gcc-native/12.3
-source /path/to/spack/share/spack/setup-env.sh
 export PATH=/pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin:$PATH
 export LD_LIBRARY_PATH=/pscratch/sd/t/tpeterkasoftware/mpich-4.3.0/install/lib:$LD_LIBRARY_PATH
+
+source /path/to/spack/share/spack/setup-env.sh
 ```
-Edit `~/.spack/packages.yaml` to use gcc 12.3.0 and my pre-installed mpich:
+### Edit `~/.spack/packages.yaml` to use gcc 12.3.0 and my pre-installed mpich:
+
+(For Perlmutter)
+
 ```
 packages:
   gcc:
@@ -42,27 +74,46 @@ packages:
             LD_LIBRARY_PATH: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/lib:/opt/cray/libfabric/1.20.1/lib64
     buildable: False
 ```
+
+### Add symlinks for compiler wrappers pointing to my mpich installation
+
+(For Perlmutter)
+
+
+Add a `bin` directory to your `$PATH` or use a `bin` directory already in your `$PATH`.
+
+Then add the following symlinks in that `bin` directory.
+
+```
+cd /path/to/bin
+ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpif90 ftn
+ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicc cc
+ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicxx CC
+```
+Confirm that the symlinks work:
+`which ftn`, `which cc`, `which CC`
+
 -----
 
-## Cloning this repository
+## Cloning this repository and setting up a Spack environment
+
+### Clone this repository.
 
 ```
 git clone https://github.com/tpeterka/e3sm-workflow
 ```
 
------
-
-## Adding the following Spack repositories to your local Spack installation
+### Add the following Spack repositories to your local Spack installation
 
 No environment should be active. Run `spack env status` to be sure.
 
-LowFive
+Add the LowFive repository to your Spack (not included with Spack by default).
 ```
 git clone https://github.com/diatomic/LowFive
 spack repo add LowFive
 ```
 
-Wilkins
+Add the Wilkins repository to your Spack (not included with Spack by default).
 ```
 git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
@@ -71,31 +122,31 @@ spack repo add wilkins
 <!--
 Mpas-o-scorpio
 ```
-spack repo add /path_to/e3sm-workflow/mpas-o-scorpio
+spack repo add /path/to/e3sm-workflow/mpas-o-scorpio
 ```
 -->
 
------
+### Set up Spack environment
 
-## Setting up Spack environment
-
-### First time: create and load the Spack environment
+First time: create and load the Spack environment
 
 ```
-cd /path_to/e3sm-workflow
+cd /path/to/e3sm-workflow
 source ./create-env.sh             # requires being in the same directory to work properly
 source ./load-env.sh
 ```
 
-### Subsequent times: load the Spack environment
+Subsequent times: just load the Spack environment
 
 ```
-source /path_to/e3sm-workflow/load-env.sh
+source /path/to/e3sm-workflow/load-env.sh
 ```
 
 -----
 
-## Clone E3SM repository
+## Cloning the E3SM repository and setting up an ocean test case
+
+### Clone E3SM repository
 
 ```
 git clone https://github.com/E3SM-Project/E3SM
@@ -144,9 +195,9 @@ git config --global user.name "<your name>"
 
 <!-- ----- -->
 
-## Creating ocean test case (ccase)
+### Create the ocean test case (ccase)
 
-The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
+The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
 ```
 cd /path/to/E3SM/code/latest/cime/scripts
@@ -154,25 +205,22 @@ cd /path/to/E3SM/code/latest/cime/scripts
 
 ```
 
-Note: `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
+Note: (For Perlmutter) `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
 
------
+The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
 
-# (For Perlmutter) Modify environment for building E3SM
+### Patch the environment xml file
 
-Patch the environment xml file and the universal cmake file:
+(For Perlmutter)
 
 ```
 cd /path/to/E3SM/<case>
 patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch
-patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 ```
 
------
+### Set up the case
 
-## Set up the case
-
-The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
+The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
 ```
 cd /path/to/E3SM/<case>
@@ -181,57 +229,112 @@ cd /path/to/E3SM/<case>
 
 -----
 
-## (For Perlmutter) Add symlinks for compiler wrappers pointing to my mpich installation
+## Building E3SM to run in a workflow
 
-Add or use a `bin` directory to or in your `$PATH`
-Then add symlinks:
+The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
-```
-cd /path/to/bin
-ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpif90 ftn
-ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicc cc
-ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicxx CC
-```
-Confirm that the symlinks work:
-`which ftn`, `which cc`, `which CC`
-
------
-
-## Build E3SM
-
-The spack environment should have been loaded (`source /path_to/e3sm-workflow/load-env.sh`)
-
-The first time, patch the E3SM makefiles:
+### The first time, patch the E3SM cmake files
 
 ```
 cd /path/to/E3SM
 git apply /path/to/e3sm-workflow/E3SM.patch
+cd /path/to/E3SM/<case>
+patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 ```
 
-Then proceed to build E3SM:
+### Build E3SM
+
+The original standalone executable, `e3sm.exe`, is built along with the new
+shared object, `e3sm_shared.so`, which is what the workflow will run.
+The original executable is built so that it can be run standalone if desired.
+Because two targets are built that use the same object files, the `case.build`
+script, which uses `-j` to parallelize the build, fails. We start the build
+using the script so that the build is configured, and after it fails, we build
+sequentially using `make`.
 
 ```
 cd /path/to/E3SM/<case>
-./case.build --clean-all   # optional, if rebuilding
-./case.build
-make -C ccase1/bld/cmake-bld clean
-make -C ccase1/bld/cmake-bld VERBOSE=1
+./case.build --clean-all                    # optional, if rebuilding
+./case.build                                # build in parallel until it fails
+make -C ccase1/bld/cmake-bld clean          # then clean and make sequentially
+make -C ccase1/bld/cmake-bld VERBOSE=1      # VERBOSE=1 is optional
 mv <case>/bld/cmake-bld/cmake/cpl/e3sm_shared.so <case>/bld
 
 ```
-The build logs and executable are located in `/path/to/E3SM/<case>/<case>/bld`.
+The build logs, executable, and shared object are located in `/path/to/E3SM/<case>/<case>/bld`.
 
 -----
 
-# Run E3SM standalone (without a workflow) as a test
+## Testing the E3SM build
+
+The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
+
+### Test that `e3sm.exe` was built correctly by running it.
 
 ```
 unset HDF5_VOL_CONNECTOR
 unset HDF5_PLUGIN_PATH
 cd /path/to/E3SM/<case>/<case>/run
 mkdir timing/checkpoints      # first time only
+(For Perlmutter)
 salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
-srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores   -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
+srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
 ```
 
+### Test that `e3sm_shared.so` was built correctly by running it using a driver utility
+
+```
+unset HDF5_VOL_CONNECTOR
+unset HDF5_PLUGIN_PATH
+cd /path/to/E3SM/<case>/<case>/run
+mkdir timing/checkpoints      # first time only
+(For Perlmutter)
+salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
+```
+
+-----
+
+## Configuring the workflow
+
+Edit line 2 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the `path/to/E3SM/<case>/<case>/bld/e3sm_shared.so` on your machine.
+
+Edit line 10 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the `path/to/e3sm-workflow/analysis.py` on your machine.
+
+Edit line 12 of `/path/to/e3sm-workflow/wilkins-config.yaml`, the first argument to `path/to/E3SM/<case>/<case>/run/<your_file.nc>` on your machine, and the second argument to the variable you wish to print.
+
+Edit line 6 of `/path/to/e3sm-workflow/wilkins-run.sh` to the `path/to/e3sm-workflow/wilkins-config.yaml` on your machine.
+
+To switch between file mode and MPI mode for data transfers:
+Change the settings of `passthru` and `metadata` on lines 8, 9, and 17, 18 of
+`path/to/e3sm-workflow/wilkins-config.yaml` as follows:
+
+file transfer:
+`passthru: 1`
+`metadata: 0`
+
+MPI message transfer:
+`passthru: 0`
+`metadata: 1`
+
+Because of the way NetCDF works, even for MPI data transfers, there needs to be a valid netCDF file on disk of the same name being read by
+the analysis code, otherwise the analysis code will fail. For the first execution, set `passthru: 1` and `metadata: 0`
+so that a file is produced on disk, and then leave the file
+there. Afterwards you may set `passthru: 0` and `metadata: 1` for MPI mode.  Alternatively, you may copy the
+blank netcdf file `blank.nc` from the top level of the e3sm-workflow repository to the run directory
+and rename `blank.nc` to name of the file given in the first argument to the analysis code.
+
+-----
+
+## Running the workflow
+
+The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
+
+```
+cd /path/to/E3SM/<case>/<case>/run
+mkdir timing/checkpoints      # first time only
+(For Perlmutter)
+salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+/path/to/e3sm-workflow/wilkins-run.sh
+```
 -----

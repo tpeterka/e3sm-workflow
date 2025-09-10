@@ -1,0 +1,18 @@
+tasks:
+  - func: "$PSCRATCH/software/E3SMv3/ccase1/ccase1/bld/e3sm_shared.so"
+    nprocs: 128
+    outports:
+      - filename: "*.nc"
+        dsets:
+          - name: "*"
+            passthru: 1
+            metadata: 0
+  - func: "$HOME/software/e3sm-workflow/analysis.py"
+    nprocs: 1
+    args: ["$PSCRATCH/software/E3SMv3/ccase1/ccase1/run/ccase1.mpaso.rst.0001-01-06_00000.nc", "xtime"]
+    inports:
+      - filename: "*.nc"
+        dsets:
+          - name: "*"
+            passthru: 1
+            metadata: 0
