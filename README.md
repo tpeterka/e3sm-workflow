@@ -71,7 +71,7 @@ packages:
       extra_attributes:
         environment:
           prepend_path:
-            LD_LIBRARY_PATH: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/lib:/opt/cray/libfabric/1.20.1/lib64
+            LD_LIBRARY_PATH: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/lib:/opt/cray/libfabric/1.22.0/lib64
     buildable: False
 ```
 
@@ -119,10 +119,12 @@ git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
 ```
 
+<!--
 Add the Mpas-o-scorpio repository to your Spack installation (not included with Spack by default).
 ```
 spack repo add /path/to/e3sm-workflow/mpas-o-scorpio
 ```
+-->
 
 ### Set up the Spack environment
 
@@ -198,8 +200,8 @@ git config --global user.name "<your name>"
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
 ```
-cd /path/to/E3SM/code/latest/cime/scripts
-./create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+cd /path/to/E3SM
+code/latest/cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
 ```
 
 Note: (For Perlmutter) `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
@@ -221,6 +223,11 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 
 ```
 cd /path/to/E3SM/<case>
+
+./xmlchange PIO_NUMTASKS=128
+./xmlchange PIO_STRIDE=1
+./xmlchange PIO_TYPENAME=netcdf4p
+
 ./case.setup
 ```
 
@@ -253,11 +260,25 @@ sequentially using `make`.
 cd /path/to/E3SM/<case>
 ./case.build --clean-all                    # optional, if rebuilding
 ./case.build                                # build in parallel until it fails
-make -C ccase1/bld/cmake-bld clean          # then clean and make sequentially
-make -C ccase1/bld/cmake-bld VERBOSE=1      # VERBOSE=1 is optional
+make -C <case>/bld/cmake-bld clean          # then clean and make sequentially
+make -C <case>/bld/cmake-bld VERBOSE=1      # VERBOSE=1 is optional
 mv <case>/bld/cmake-bld/cmake/cpl/e3sm_shared.so <case>/bld
 ```
 The build logs, executable, and shared object are located in `/path/to/E3SM/<case>/<case>/bld`.
+
+In rare circumstances, if you need to reset the case, you would need to re-patch
+the files as follows:
+
+```
+cd /path/to/E3SM/<case>
+./case.setup --reset
+patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch
+patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
+```
+
+Then proceed with the rest of the build steps above. However, it should
+rarely be necessary to reset the case, usually only for debugging and
+development.
 
 -----
 

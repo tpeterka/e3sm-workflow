@@ -33,6 +33,7 @@ class MpasOScorpio(CMakePackage):
                 '-DPIO_USE_MALLOC=true',
                 '-DCMAKE_C_FLAGS=-fPIC',
                 '-DCMAKE_CXX_FLAGS=-fPIC',
+                '-DCMAKE_Fortran_FLAGS=-fPIC',
                 '-DPIO_ENABLE_TIMING=false',
                 self.define_from_variant("WITH_NETCDF", "netcdf"),
                 self.define_from_variant("WITH_HDF5", "hdf5"),
