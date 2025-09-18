@@ -355,7 +355,7 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 cd /path/to/E3SM/<case>/<case>/run
 mkdir timing/checkpoints      # first time only
 (For Perlmutter)
-salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+salloc --nodes 2 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
 /path/to/e3sm-workflow/wilkins-run.sh
 ```
 -----
