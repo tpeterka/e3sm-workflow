@@ -23,6 +23,8 @@ spack add henson+python+mpi-wrappers
 spack add netcdf-c@4.9+mpi build_system=cmake
 spack add parallel-netcdf
 spack add netcdf-fortran@4.5.3
+spack add py-pip
+# spack add py-netcdf4+mpi
 # spack add mpas-o-scorpio+hdf5
 
 # install everything in environment
@@ -30,5 +32,8 @@ echo "installing dependencies in environment"
 spack install henson        # install henson so that henson path is set
 export HENSON=`spack location -i henson`
 spack install
+
+# install py-netcdf4 via pip instead of via spack
+pip3 install netCDF4
 
 spack env deactivate

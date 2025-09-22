@@ -16,6 +16,7 @@ export PNETCDF=`spack location -i parallel-netcdf`
 export HDF5=`spack location -i hdf5`
 export LOWFIVE=`spack location -i lowfive`
 export HENSON=`spack location -i henson`
+export WILKINS=`spack location -i wilkins`
 export USE_PIO2=true
 export OPENMP=false
 export HDF5_USE_FILE_LOCKING=FALSE
@@ -70,4 +71,5 @@ echo "environment variables are set for running LowFive"
 # give openMP 1 core for now to prevent using all cores for threading
 # could set a more reasonable number to distribute cores between mpi + openMP
 export OMP_NUM_THREADS=1
+
 
