@@ -206,7 +206,7 @@ code/latest/cime/scripts/create_newcase --case <case> --output-root "/path/to/E3
 
 Note: (For Perlmutter) `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
 
-The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
+./xmlchange PIO_STRIDE=1The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
 
 ### Patch the environment xml file
 
@@ -240,7 +240,7 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ### The first time, patch the E3SM cmake files
 
 ```
-cd /path/to/E3SM
+cd /path/to/E3SM/code/latest
 git apply /path/to/e3sm-workflow/E3SM.patch
 cd /path/to/E3SM/<case>
 patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
@@ -251,17 +251,11 @@ patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 The original standalone executable, `e3sm.exe`, is built along with the new
 shared object, `e3sm_shared.so`, which is what the workflow will run.
 The original executable is built so that it can be run standalone if desired.
-Because two targets are built that use the same object files, the `case.build`
-script, which uses `-j` to parallelize the build, fails. We start the build
-using the script so that the build is configured, and after it fails, we build
-sequentially using `make`.
 
 ```
 cd /path/to/E3SM/<case>
 ./case.build --clean-all                    # optional, if rebuilding
-./case.build                                # build in parallel until it fails
-make -C <case>/bld/cmake-bld clean          # then clean and make sequentially
-make -C <case>/bld/cmake-bld VERBOSE=1      # VERBOSE=1 is optional
+./case.build
 mv <case>/bld/cmake-bld/cmake/cpl/e3sm_shared.so <case>/bld
 ```
 The build logs, executable, and shared object are located in `/path/to/E3SM/<case>/<case>/bld`.

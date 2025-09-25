@@ -24,6 +24,7 @@ index 0eacdbd35e..c41ca5b389 100644
 +    set                         (WILKINS_TARGET "e3sm_shared")
 +
 +    add_library                 (${WILKINS_TARGET} SHARED)
++    add_dependencies            (${WILKINS_TARGET} ${TARGET_NAME})
 +    target_sources              (${WILKINS_TARGET} PRIVATE ${REAL_SOURCES})
 +    target_link_libraries       (${WILKINS_TARGET} ${HENSON_LIBRARIES})
 +    set_target_properties       (${WILKINS_TARGET} PROPERTIES PREFIX "")
@@ -102,7 +103,7 @@ index 0eacdbd35e..c41ca5b389 100644
      target_sources(${TARGET_NAME} PRIVATE ${REAL_SOURCES})
      if (COMP_NAME STREQUAL "csm_share")
        find_package(NETCDF REQUIRED)
-@@ -358,4 +441,7 @@ macro(build_model COMP_CLASS COMP_NAME)
+@@ -358,4 +442,7 @@ macro(build_model COMP_CLASS COMP_NAME)
    # Set flags for target
    target_include_directories(${TARGET_NAME} PRIVATE ${INCLDIR})
  

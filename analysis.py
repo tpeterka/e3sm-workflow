@@ -2,6 +2,7 @@ from netCDF4 import Dataset
 # import sys
 
 # print("analysis starting up, argv[0]", sys.argv[0], "argv[1]", sys.argv[1], "argv[2]", sys.argv[2])
+print("analysis starting up")
 
 filename = "/pscratch/sd/t/tpeterka/software/E3SMv3/ccase1/ccase1/run/ccase1.mpaso.rst.0001-01-06_00000.nc"
 varname = "xtime"

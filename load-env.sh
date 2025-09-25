@@ -72,4 +72,9 @@ echo "environment variables are set for running LowFive"
 # could set a more reasonable number to distribute cores between mpi + openMP
 export OMP_NUM_THREADS=1
 
+# load the spack installed python in the spack environment
+spack load python
+
+# install py-netcdf4 via pip instead of via spack
+# pip3 install netCDF4
 
