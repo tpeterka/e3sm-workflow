@@ -304,6 +304,19 @@ salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your
 srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
 ```
 
+### Test that `e3sm_shared.so` can run with LowFive and Wilkins
+
+Edit line 2 of `/path/to/e3sm-workflow/wilkins-config-prod-only.yaml` to the `path/to/E3SM/<case>/<case>/bld/e3sm_shared.so` on your machine.
+
+Edit line 6 of `/path/to/e3sm-workflow/wilkins-run-prod-only.sh` to the `path/to/e3sm-workflow/wilkins-config-prod-only.yaml` on your machine.
+
+```
+cd /path/to/E3SM/<case>/<case>/run
+mkdir timing/checkpoints      # first time only
+(For Perlmutter)
+salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+/path/to/e3sm-workflow/wilkins-run-prod-only.sh
+```
 -----
 
 ## Configuring the workflow

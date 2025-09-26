@@ -17,7 +17,7 @@ spack env activate $SPACKENV
 
 spack add mpich@4
 spack add hdf5@1.14+hl+mpi
-spack add lowfive@debug
+spack add lowfive
 spack add wilkins
 spack add henson+python+mpi-wrappers
 spack add netcdf-c@4.9+mpi

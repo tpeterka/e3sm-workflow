@@ -1,0 +1,10 @@
+# change the paths below to your own
+tasks:
+  - func: "/pscratch/sd/t/tpeterka/software/E3SMv3/ccase1/ccase1/bld/e3sm_shared.so"
+    nprocs: 128
+    inports:
+      - filename: "*.nc"
+        dsets:
+          - name: "*"
+            passthru: 1
+            metadata: 0
