@@ -46,6 +46,7 @@ module unload PrgEnv-gnu/8.5.0
 module load gcc-native/12.3
 export PATH=/pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin:$PATH
 export LD_LIBRARY_PATH=/pscratch/sd/t/tpeterkasoftware/mpich-4.3.0/install/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$LD_LIBRARY_PATH
 
 source /path/to/spack/share/spack/setup-env.sh
 ```
