@@ -198,9 +198,11 @@ git config --global user.name "<your name>"
 
 <!-- ----- -->
 
-### Create the ocean test case (ccase)
+### Create an ocean test case (C case)
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
+
+Below, replace `<case>` with the name of your case, eg., `ccase1`.
 
 On Perlmutter, a larger C case with 128 MPI processses:
 ```
@@ -212,10 +214,10 @@ Note: `pm-cpu` above is perlmutter-cpu.
 On smaller workstations (eg., ANL's GCE machines), a smaller C case with 16 MPI processes:
 ```
 cd /path/to/E3SM
-cime/scripts/create_newcase --case ccase1 --output-root "/home/tpeterka/E3SM/ccase1" --handle-preexisting-dirs u --res T62_IcoswISC30E3r5 --compset CMPASO-IAF --compiler gnu
+cime/scripts/create_newcase --case ccase1 --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_IcoswISC30E3r5 --compset CMPASO-IAF --machine anlgce-ub22 --compiler gnu
 ```
 
-Note: For ANL's GCE machines currently running Ubuntu 22, the machine name will be assigned to `anlgce-ub22`.
+Note: `anlgce-ub22` above is ANL GCE with Ubuntu22.
 
 The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
 
