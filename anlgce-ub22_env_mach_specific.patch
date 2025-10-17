@@ -1,0 +1,46 @@
+--- old.env_mach_specific.xml	2025-10-15 14:08:16.640505000 -0500
++++ env_mach_specific.xml	2025-10-15 14:25:29.668314000 -0500
+@@ -31,9 +31,12 @@
+       <command name="load">gcc/12.1.0</command>
+     </modules>
+   </module_system>
++<!--
+   <environment_variables mpilib="mpi-serial">
+     <env name="NETCDF_PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/netcdf/4.8.0c-4.3.1cxx-4.5.3f-serial/gcc-12.1.0</env>
+   </environment_variables>
++-->
++<!--
+   <environment_variables mpilib="mpich">
+     <env name="LD_LIBRARY_PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/mpich/4.1.2/gcc-12.1.0/lib:$ENV{LD_LIBRARY_PATH}</env>
+     <env name="PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/mpich/4.1.2/gcc-12.1.0/bin:$ENV{PATH}</env>
+@@ -43,6 +46,8 @@
+     <env name="PNETCDF_PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/pnetcdf/1.12.3/mpich-4.1.2/gcc-12.1.0</env>
+     <env name="MOAB_ROOT">$SHELL{if [ -z "$MOAB_ROOT" ]; then echo /nfs/gce/projects/climate/software/moab/devel/mpich-4.1.2/gcc-12.1.0; else echo "$MOAB_ROOT"; fi}</env>
+   </environment_variables>
++-->
++<!--
+   <environment_variables mpilib="openmpi">
+     <env name="LD_LIBRARY_PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/openmpi/4.1.6/gcc-12.1.0/lib:$ENV{LD_LIBRARY_PATH}</env>
+     <env name="PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/openmpi/4.1.6/gcc-12.1.0/bin:$ENV{PATH}</env>
+@@ -52,6 +57,7 @@
+     <env name="PNETCDF_PATH">/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/pnetcdf/1.12.3/openmpi-4.1.6/gcc-12.1.0</env>
+     <env name="MOAB_ROOT">$SHELL{if [ -z "$MOAB_ROOT" ]; then echo /nfs/gce/projects/climate/software/moab/devel/openmpi-4.1.6/gcc-12.1.0; else echo "$MOAB_ROOT"; fi}</env>
+   </environment_variables>
++-->
+   <environment_variables BUILD_THREADED="TRUE">
+     <env name="OMP_STACKSIZE">64M</env>
+   </environment_variables>
+@@ -60,11 +66,13 @@
+   </environment_variables>
+   <environment_variables compiler="gnu" mpilib="mpich">
+     <env name="PKG_CONFIG_PATH">$SHELL{if [ -z "$PKG_CONFIG_PATH" ]; then echo /nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/protobuf/21.6/gcc-12.1.0/lib/pkgconfig; else echo "/nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/protobuf/21.6/gcc-12.1.0/lib/pkgconfig:$PKG_CONFIG_PATH"; fi}</env>
++<!--
+     <env name="ADIOS2_ROOT">$SHELL{if [ -z "$ADIOS2_ROOT" ]; then echo /nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/adios2/2.10.2/mpich-4.1.2/gcc-12.1.0; else echo "$ADIOS2_ROOT"; fi}</env>
+     <env name="BLOSC2_ROOT">$SHELL{if [ -z "$BLOSC2_ROOT" ]; then echo /nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/c-blosc2/2.15.2/gcc-12.1.0; else echo "$BLOSC2_ROOT"; fi}</env>
+     <env name="MGARD_ROOT">$SHELL{if [ -z "$MGARD_ROOT" ]; then echo /nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/mgard/1.5.2/gcc-12.1.0; else echo "$MGARD_ROOT"; fi}</env>
+     <env name="SZ_ROOT">$SHELL{if [ -z "$SZ_ROOT" ]; then echo /nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/sz/2.1.12.5/gcc-12.1.0; else echo "$SZ_ROOT"; fi}</env>
+     <env name="ZFP_ROOT">$SHELL{if [ -z "$ZFP_ROOT" ]; then echo /nfs/gce/projects/climate/software/linux-ubuntu22.04-x86_64/zfp/1.0.1/gcc-12.1.0; else echo "$ZFP_ROOT"; fi}</env>
++-->
+   </environment_variables>
+   <mpirun mpilib="mpich">
+     <executable>mpirun</executable>

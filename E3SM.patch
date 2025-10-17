@@ -12,7 +12,7 @@ index 0eacdbd35e..c41ca5b389 100644
      set(TARGET_NAME "${CIME_MODEL}.exe")
      add_executable(${TARGET_NAME})
      target_sources(${TARGET_NAME} PRIVATE ${REAL_SOURCES})
-@@ -293,9 +296,89 @@ macro(build_model COMP_CLASS COMP_NAME)
+@@ -293,9 +296,90 @@ macro(build_model COMP_CLASS COMP_NAME)
  
      endif()
  

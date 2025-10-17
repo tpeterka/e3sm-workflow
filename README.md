@@ -148,6 +148,8 @@ source /path/to/e3sm-workflow/load-env.sh
 
 ### Clone the E3SM repository
 
+No Spack environment should be active. Check with `spack env status` and `spack env deactivate` if necessary.
+
 ```
 git clone https://github.com/E3SM-Project/E3SM
 cd E3SM
@@ -199,14 +201,22 @@ git config --global user.name "<your name>"
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
+On Perlmutter, a larger C case with 128 MPI processses:
 ```
 cd /path/to/E3SM
-code/latest/cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+```
+Note: `pm-cpu` above is perlmutter-cpu.
+
+On smaller workstations (eg., ANL's GCE machines), a smaller C case with 16 MPI processes:
+```
+cd /path/to/E3SM
+cime/scripts/create_newcase --case ccase1 --output-root "/home/tpeterka/E3SM/ccase1" --handle-preexisting-dirs u --res T62_IcoswISC30E3r5 --compset CMPASO-IAF --compiler gnu
 ```
 
-Note: (For Perlmutter) `pm-cpu` above is perlmutter-cpu. Other machines supported by E3SM are also available.
+Note: For ANL's GCE machines currently running Ubuntu 22, the machine name will be assigned to `anlgce-ub22`.
 
-./xmlchange PIO_STRIDE=1The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
+The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
 
 ### Patch the environment xml file
 
@@ -214,7 +224,10 @@ Note: (For Perlmutter) `pm-cpu` above is perlmutter-cpu. Other machines supporte
 
 ```
 cd /path/to/E3SM/<case>
-patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch
+# for Perlmutter
+patch env_mach_specific.xml /path/to/e3sm-workflow/pm-cpu_env_mach_specific.patch
+# for ANL GCE
+patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific.patch
 ```
 
 ### Set up the case
@@ -224,7 +237,7 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ```
 cd /path/to/E3SM/<case>
 
-./xmlchange PIO_NUMTASKS=128
+./xmlchange PIO_NUMTASKS=<num_mpi_procs>    # num_mpi_procs = 128 for the larger case, 16 for the smaller case
 ./xmlchange PIO_STRIDE=1
 ./xmlchange PIO_TYPENAME=netcdf4p
 
@@ -240,7 +253,7 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ### The first time, patch the E3SM cmake files
 
 ```
-cd /path/to/E3SM/code/latest
+cd /path/to/E3SM
 git apply /path/to/e3sm-workflow/E3SM.patch
 cd /path/to/E3SM/<case>
 patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
