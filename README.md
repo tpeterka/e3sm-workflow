@@ -240,11 +240,14 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ```
 cd /path/to/E3SM/<case>
 
+./xmlchange NTASKS=<num_mpi_procs>          # num_mpi_porcs = 128 for the larger case, 16 for the smaller case
 ./xmlchange PIO_NUMTASKS=<num_mpi_procs>    # num_mpi_procs = 128 for the larger case, 16 for the smaller case
 ./xmlchange PIO_STRIDE=1
 ./xmlchange PIO_TYPENAME=netcdf4p
 
 ./case.setup
+
+./preview_run
 ```
 
 -----
@@ -302,13 +305,14 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 unset HDF5_VOL_CONNECTOR
 unset HDF5_PLUGIN_PATH
 cd /path/to/E3SM/<case>/<case>/run
+mkdir timing                  # first time only
 mkdir timing/checkpoints      # first time only
 (For Perlmutter)
 salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
 (large 128-proc run)
-srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
+srun  -l -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
 (small 16-proc run)
-srun  --label  -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
+srun  -l -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
 ```
 
 ### Test that `e3sm_shared.so` was built correctly by running it using a driver utility
@@ -321,9 +325,9 @@ mkdir timing/checkpoints      # first time only
 (For Perlmutter)
 salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
 (for 128-process case)
-srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
+srun  -l -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
 (for 16-process case)
-srun  --label  -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
+srun  -l -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
 ```
 
 ### Test that `e3sm_shared.so` can run with LowFive and Wilkins
