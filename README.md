@@ -211,7 +211,7 @@ cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" -
 ```
 Note: `pm-cpu` above is perlmutter-cpu.
 
-On smaller workstations (eg., ANL's GCE machines), a smaller C case with 16 MPI processes:
+On smaller workstations (eg., ANL's GCE machines), a smaller C case with 8 or 16 MPI processes:
 ```
 cd /path/to/E3SM
 cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_IcoswISC30E3r5 --compset CMPASO-IAF --machine anlgce-ub22 --compiler gnu
@@ -240,8 +240,8 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ```
 cd /path/to/E3SM/<case>
 
-./xmlchange NTASKS=<num_mpi_procs>          # num_mpi_porcs = 128 for the larger case, 16 for the smaller case
-./xmlchange PIO_NUMTASKS=<num_mpi_procs>    # num_mpi_procs = 128 for the larger case, 16 for the smaller case
+./xmlchange NTASKS=<num_procs>          # num_procs = 128 for the larger case, 8 for the smaller case
+./xmlchange PIO_NUMTASKS=<num_procs>    # num_procs = 128 for the larger case, 8 for the smaller case
 ./xmlchange PIO_STRIDE=1
 ./xmlchange PIO_TYPENAME=netcdf4p
 
@@ -285,7 +285,7 @@ the files as follows:
 ```
 cd /path/to/E3SM/<case>
 ./case.setup --reset
-patch env_mach_specific.xml /path/to/e3sm-workflow/env_mach_specific.patch
+patch env_mach_specific.xml /path/to/e3sm-workflow/<machine>_env_mach_specific.patch
 patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 ```
 
@@ -309,10 +309,7 @@ mkdir timing                  # first time only
 mkdir timing/checkpoints      # first time only
 (For Perlmutter)
 salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
-(large 128-proc run)
-srun  -l -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
-(small 16-proc run)
-srun  -l -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
+srun -l -n <num_procs> -N 1 -c 2  --cpu_bind=cores  -m plane=128 /path/to/E3SM/<case>/<case>/bld/e3sm.exe 2>&1 | tee e3sm-run-log.txt
 ```
 
 ### Test that `e3sm_shared.so` was built correctly by running it using a driver utility
@@ -324,17 +321,14 @@ cd /path/to/E3SM/<case>/<case>/run
 mkdir timing/checkpoints      # first time only
 (For Perlmutter)
 salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
-(for 128-process case)
-srun  -l -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
-(for 16-process case)
-srun  -l -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
+srun -l -n <num_procs> -N 1 -c 2  --cpu_bind=cores  -m plane=128 $HENSON/bin/henson-exec -- /path/to/E3SM/<case>/<case>/bld/e3sm_shared.so 2>&1 | tee e3sm-run-log.txt
 ```
 
 ### Test that `e3sm_shared.so` can run with LowFive and Wilkins
 
 Edit line 2 of `/path/to/e3sm-workflow/wilkins-config-prod-only.yaml` to the `path/to/E3SM/<case>/<case>/bld/e3sm_shared.so` on your machine.
 
-Edit line 4 of `/path/to/e3sm-workflow/wilkins-config-prod-only.yaml` to the number of MPI processes for the case being run (eg, 128 or 16)
+Edit line 4 of `/path/to/e3sm-workflow/wilkins-config-prod-only.yaml` to the number of MPI processes for the case being run
 
 Edit lines 10, 19 of `/path/to/e3sm-workflow/wilkins-run-prod-only.sh` to the `path/to/e3sm-workflow/wilkins-config-prod-only.yaml` on your machine.
 
@@ -354,7 +348,7 @@ salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your
 
 Edit line 2 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the `path/to/E3SM/<case>/<case>/bld/e3sm_shared.so` on your machine.
 
-Edit line 4 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the number of MPI processes for the case being run (eg, 128 or 16)
+Edit line 4 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the number of MPI processes for the case being run
 
 Edit line 10 of `/path/to/e3sm-workflow/wilkins-config.yaml` to the `path/to/e3sm-workflow/analysis.py` on your machine.
 
@@ -396,11 +390,8 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ```
 cd /path/to/E3SM/<case>/<case>/run
 mkdir timing/checkpoints      # first time only
-(For Perlmutter)
-(for 128-process case)
-salloc --nodes 2 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
-(for 16-process case)
-salloc --nodes 1 --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+(For Perlmutter, num_nodes = 2 for larger case, 1 for smaller case)
+salloc --nodes <num_nodes> --qos interactive --time 30:00 --constraint cpu --account=<your-account>
 /path/to/e3sm-workflow/wilkins-run.sh
 ```
 -----
