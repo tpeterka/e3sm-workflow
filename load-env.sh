@@ -30,16 +30,6 @@ export NETCDF_C_PATH=$NETCDF
 export NETCDF_FORTRAN_PATH=$NETCDFF
 export PNETCDF_PATH=$PNETCDF
 export HDF5_ROOT=$HDF5
-# export PIO_VERSION_MAJOR=2
-# export PIO_LIBDIR="$PIO/lib"
-# export PIO_INCDIR="$PIO/include"
-# export PIO_TYPENAME_VALID_VALUES="netcdf4p"
-export PIO_TYPENAME="netcdf4p"
-export PIO_NUMTASKS="128"
-export PIO_STRIDE="1"
-export CC=mpicc
-export CXX=mpicxx
-export FC=mpif90
 echo "environment variables are set for building E3SM"
 
 # set load library paths for running
@@ -62,9 +52,7 @@ export PATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin:$PATH
 # enable VOL plugin
 unset HDF5_PLUGIN_PATH
 unset HDF5_VOL_CONNECTOR
-lowfive_module=`python3 -c "import lowfive; print(lowfive._lowfive.__file__)"`
-lowfive_library=`ldd $lowfive_module | awk 'NF == 4 {print $3}; NF == 2 {print $1}' | grep lowfive`
-export HDF5_PLUGIN_PATH=`dirname $lowfive_library`
+export HDF5_PLUGIN_PATH=$LOWFIVE/lib
 export HDF5_VOL_CONNECTOR="lowfive under_vol=0;under_info={};"
 echo "environment variables are set for running LowFive"
 
@@ -74,6 +62,8 @@ export OMP_NUM_THREADS=1
 
 # load the spack installed python in the spack environment
 spack load python
+
+export CRAY_ACCEL_TARGET=nvidia80
 
 # install py-netcdf4 via pip instead of via spack
 # pip3 install netCDF4

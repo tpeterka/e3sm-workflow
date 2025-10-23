@@ -30,32 +30,31 @@ The instructions in this README are divided into the following main steps:
 Preliminary steps include setting up your shell environment, loading/unloading
 modules, and configuring your spack installation.
 
-### Modify your bash profile
+### Edit `~/.spack/packages.yaml` to use the system-installed mpich
 
-(For Perlmutter)
-
-The version of MPI included with the Cray programming environment is too old.
-Use mpich built by me, and unload the Cray programming environment module.
-Match the compiler that I used to build my mpich.
-This is also a good place to initialize your spack installation.
-
-Add to your `~/.bash_profile` or `~/.bashrc`:
-
-```
-module unload PrgEnv-gnu/8.5.0
-module load gcc-native/12.3
-export PATH=/pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin:$PATH
-export LD_LIBRARY_PATH=/pscratch/sd/t/tpeterkasoftware/mpich-4.3.0/install/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$LD_LIBRARY_PATH
-
-source /path/to/spack/share/spack/setup-env.sh
-```
-### Edit `~/.spack/packages.yaml` to use gcc 12.3.0 and my pre-installed mpich
+The gcc-12 compiler is used below, but you may use a newer gnu compiler such as gcc-13. All of the following instructions are for gnu.
 
 (For Perlmutter)
 
 ```
 packages:
+  mpich:
+    buildable: false
+    externals:
+    - spec: mpich@3
+      prefix: /opt/cray/pe/mpich/8.1.30/ofi/gnu/12.3
+      modules:
+      - cray-mpich/8.1.30
+      extra_attributes:
+        environment:
+          prepend_path:
+            LD_LIBRARY_PATH: /opt/cray/libfabric/1.22.0/lib64
+  libfabric:
+    buildable: false
+    externals:
+    - spec: libfabric@1.22.0
+      modules:
+      - libfabric/1.22.0
   gcc:
     externals:
     - spec: gcc@12.3.0 languages='c,c++,fortran'
@@ -65,34 +64,7 @@ packages:
           c: /usr/bin/gcc-12
           cxx: /usr/bin/g++-12
           fortran: /usr/bin/gfortran-12
-  mpich:
-    externals:
-    - spec: mpich@4
-      prefix: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install
-      extra_attributes:
-        environment:
-          prepend_path:
-            LD_LIBRARY_PATH: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/lib:/opt/cray/libfabric/1.22.0/lib64
-    buildable: False
 ```
-
-### Add symlinks for compiler wrappers pointing to my mpich installation
-
-(For Perlmutter)
-
-
-Add a `bin` directory to your `$PATH` or use a `bin` directory already in your `$PATH`.
-
-Then add the following symlinks in that `bin` directory.
-
-```
-cd /path/to/bin
-ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpif90 ftn
-ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicc cc
-ln -s /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/bin/mpicxx CC
-```
-Confirm that the symlinks work:
-`which ftn`, `which cc`, `which CC`
 
 -----
 
@@ -120,13 +92,6 @@ git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
 ```
 
-<!--
-Add the Mpas-o-scorpio repository to your Spack installation (not included with Spack by default).
-```
-spack repo add /path/to/e3sm-workflow/mpas-o-scorpio
-```
--->
-
 ### Set up the Spack environment
 
 First time: create and load the Spack environment
@@ -137,11 +102,7 @@ source ./create-env.sh             # requires being in the same directory to wor
 source ./load-env.sh
 ```
 
-Subsequent times: just load the Spack environment
-
-```
-source /path/to/e3sm-workflow/load-env.sh
-```
+Subsequent times: just load the Spack environment. `source /path/to/e3sm-workflow/load-env.sh`
 
 -----
 
@@ -177,27 +138,6 @@ git config --global user.name "<your name>"
 
 -----
 
-<!-- ## Generating an E3SM ocean test case -->
-
-<!-- Edit the template in `run.ccase1.sh` according to the instructions [here](https://docs.e3sm.org/running-e3sm-guide/guide-prior-to-production/) -->
-<!-- Set the `MACHINE`, `PROJECT`, `CASE_NAME`, `CASE_ROOT`, `CODE_ROOT`. -->
-<!-- For the first time, set the `do_*` flags as follows: -->
-<!-- ``` -->
-<!-- do_fetch_code=true -->
-<!-- do_create_newcase=true -->
-<!-- do_case_setup=true -->
-<!-- do_case_build=true -->
-<!-- do_case_submit=false -->
-<!-- ``` -->
-<!-- Subsequent times, set various flags, eg. `do_fetch_code`, to `false`. -->
-
-<!-- Run the script: -->
-<!-- ``` -->
-<!-- ./run.ccase1.sh -->
-<!-- ``` -->
-
-<!-- ----- -->
-
 ### Create an ocean test case (C case)
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
@@ -221,18 +161,6 @@ Note: `anlgce-ub22` above is ANL GCE with Ubuntu22.
 
 The case will be created in `/path/to/E3SM/<case>`. Subsequent instructions refer to this location.
 
-### Patch the environment xml file
-
-(For Perlmutter)
-
-```
-cd /path/to/E3SM/<case>
-# for Perlmutter
-patch env_mach_specific.xml /path/to/e3sm-workflow/pm-cpu_env_mach_specific.patch
-# for ANL GCE
-patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific.patch
-```
-
 ### Set up the case
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
@@ -241,6 +169,15 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 cd /path/to/E3SM/<case>
 
 ./xmlchange NTASKS=<num_procs>          # num_procs = 128 for the larger case, 8 for the smaller case
+./xmlchange PIO_NUMTASKS=<num_procs>    # num_procs = 128 for the larger case, 8 for the smaller case
+
+./case.setup --reset
+
+# for Perlmutter
+patch env_mach_specific.xml /path/to/e3sm-workflow/pm-cpu_env_mach_specific.patch
+# for ANL GCE
+patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific.patch
+
 ./xmlchange PIO_NUMTASKS=<num_procs>    # num_procs = 128 for the larger case, 8 for the smaller case
 ./xmlchange PIO_STRIDE=1
 ./xmlchange PIO_TYPENAME=netcdf4p

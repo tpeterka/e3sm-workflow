@@ -1,5 +1,5 @@
 diff --git a/components/cmake/build_model.cmake b/components/cmake/build_model.cmake
-index 0eacdbd35e..c41ca5b389 100644
+index 0eacdbd35e..360e44116a 100644
 --- a/components/cmake/build_model.cmake
 +++ b/components/cmake/build_model.cmake
 @@ -250,6 +250,9 @@ macro(build_model COMP_CLASS COMP_NAME)
@@ -29,7 +29,7 @@ index 0eacdbd35e..c41ca5b389 100644
 +    target_link_libraries       (${WILKINS_TARGET} ${HENSON_LIBRARIES})
 +    set_target_properties       (${WILKINS_TARGET} PROPERTIES PREFIX "")
 +    set_target_properties       (${WILKINS_TARGET} PROPERTIES SUFFIX ".so")
-+    set                         (linker_flags "-pie -Wl,--export-dynamic")
++    set                         (linker_flags "-Wl,--export-dynamic")
 +    set                         (linker_flags "${linker_flags} -Wl,-u,henson_set_contexts,-u,henson_set_namemap")
 +    set_target_properties       (${WILKINS_TARGET} PROPERTIES LINK_FLAGS ${linker_flags})
 +
