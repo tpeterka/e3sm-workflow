@@ -136,12 +136,12 @@ Below, replace `<case>` with the name of your case, eg., `ccase1`.
 On Perlmutter, a larger C case with 128 MPI processses:
 ```
 cd /path/to/E3SM
-cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
 ```
 
 On Perlmutter, a smaller C case with 1, 2, or 4 MPI processses:
 ```
-cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine pm-cpu --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine pm-cpu --compiler gnu
 ```
 
 Note: `pm-cpu` above is perlmutter-cpu.
@@ -150,7 +150,7 @@ On smaller workstations (eg., ANL's GCE machines), a smaller C case with 1, 2, o
 
 ```
 cd /path/to/E3SM
-cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine anlgce-ub22 --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine anlgce-ub22 --compiler gnu
 ```
 
 Note: `anlgce-ub22` above is ANL GCE with Ubuntu22.
