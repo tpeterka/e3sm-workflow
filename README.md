@@ -11,7 +11,7 @@ Instructions that are specific to Perlmutter have been noted.
 
 Installation is done through Spack.
 If you don't have Spack installed or if Spack is new to you, go [here](https://spack.readthedocs.io/en/latest/) first.
-The recommended compiler is gcc version 12.
+The recommended compiler is gcc version >= 12. All of the following instructions are for gnu.
 
 The instructions in this README are divided into the following main steps:
 
@@ -31,8 +31,6 @@ Preliminary steps include setting up your shell environment, loading/unloading
 modules, and configuring your spack installation.
 
 ### Edit `~/.spack/packages.yaml` to use the system-installed mpich
-
-The gcc-12 compiler is used below, but you may use a newer gnu compiler such as gcc-13. All of the following instructions are for gnu.
 
 (For Perlmutter)
 
@@ -55,15 +53,6 @@ packages:
     - spec: libfabric@1.22.0
       modules:
       - libfabric/1.22.0
-  gcc:
-    externals:
-    - spec: gcc@12.3.0 languages='c,c++,fortran'
-      prefix: /usr
-      extra_attributes:
-        compilers:
-          c: /usr/bin/gcc-12
-          cxx: /usr/bin/g++-12
-          fortran: /usr/bin/gfortran-12
 ```
 
 -----
@@ -149,12 +138,19 @@ On Perlmutter, a larger C case with 128 MPI processses:
 cd /path/to/E3SM
 cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
 ```
+
+On Perlmutter, a smaller C case with 1, 2, or 4 MPI processses:
+```
+cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine pm-cpu --compiler gnu
+```
+
 Note: `pm-cpu` above is perlmutter-cpu.
 
-On smaller workstations (eg., ANL's GCE machines), a smaller C case with 8 or 16 MPI processes:
+On smaller workstations (eg., ANL's GCE machines), a smaller C case with 1, 2, or 4  MPI processes:
+
 ```
 cd /path/to/E3SM
-cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_IcoswISC30E3r5 --compset CMPASO-IAF --machine anlgce-ub22 --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root "/path/to/E3SM/<case>" --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine anlgce-ub22 --compiler gnu
 ```
 
 Note: `anlgce-ub22` above is ANL GCE with Ubuntu22.
@@ -168,21 +164,18 @@ The spack environment should have been loaded (`source /path/to/e3sm-workflow/lo
 ```
 cd /path/to/E3SM/<case>
 
-./xmlchange NTASKS=<num_procs>          # num_procs = 128 for the larger case, 8 for the smaller case
-./xmlchange PIO_NUMTASKS=<num_procs>    # num_procs = 128 for the larger case, 8 for the smaller case
+./xmlchange NTASKS=<num_procs>          # num_procs = 128 for the larger case, 1, 2, 4 for the smaller case
+./xmlchange PIO_NUMTASKS=<num_procs>
+./xmlchange PIO_STRIDE=1
+./xmlchange PIO_TYPENAME=netcdf4p
 
-./case.setup --reset
+./case.setup --reset                    # --reset is optional, if case was setup before
 
 # for Perlmutter
 patch env_mach_specific.xml /path/to/e3sm-workflow/pm-cpu_env_mach_specific.patch
 # for ANL GCE
 patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific.patch
 
-./xmlchange PIO_NUMTASKS=<num_procs>    # num_procs = 128 for the larger case, 8 for the smaller case
-./xmlchange PIO_STRIDE=1
-./xmlchange PIO_TYPENAME=netcdf4p
-
-./case.setup
 
 ./preview_run
 ```

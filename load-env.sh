@@ -63,8 +63,6 @@ export OMP_NUM_THREADS=1
 # load the spack installed python in the spack environment
 spack load python
 
-export CRAY_ACCEL_TARGET=nvidia80
-
 # install py-netcdf4 via pip instead of via spack
 # pip3 install netCDF4
 

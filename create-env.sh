@@ -19,7 +19,8 @@ spack add mpich
 spack add hdf5@1.14+hl+mpi
 spack add lowfive
 spack add wilkins
-spack add henson+python+mpi-wrappers
+spack develop henson+python+mpi-wrappers
+# spack add henson+python+mpi-wrappers
 spack add netcdf-c@4.9+mpi
 spack add parallel-netcdf
 spack add netcdf-fortran@4.5.3
