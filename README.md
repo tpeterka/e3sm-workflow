@@ -30,9 +30,7 @@ The instructions in this README are divided into the following main steps:
 Preliminary steps include setting up your shell environment, loading/unloading
 modules, and configuring your spack installation.
 
-### Edit `~/.spack/packages.yaml` to use the system-installed mpich
-
-(For Perlmutter)
+### (For Perlmutter) Edit `~/.spack/packages.yaml` to use the system-installed mpich
 
 ```
 packages:
@@ -53,6 +51,13 @@ packages:
     - spec: libfabric@1.22.0
       modules:
       - libfabric/1.22.0
+```
+
+### (For Perlmutter) Unload Cray programming environment and add mpich to your path
+
+```
+module unload PrgEnv-gnu/8.5.0
+export PATH=/opt/cray/pe/mpich/8.1.30/ofi/gnu/12.3/bin:$PATH
 ```
 
 -----
@@ -127,7 +132,16 @@ git config --global user.name "<your name>"
 
 -----
 
-### Create an ocean test case (C case)
+## Create an ocean test case (C case)
+
+### The first time, patch the E3SM machine configuration
+
+```
+cd /path/to/E3SM
+patch cime_config/machines/config_machines.xml /path/to/e3sm-workflow/conf_machines.patch
+```
+
+### Create a new case
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
@@ -136,15 +150,15 @@ Below, replace `<case>` with the name of your case, eg., `ccase1`.
 On Perlmutter, a larger C case with 128 MPI processses:
 ```
 cd /path/to/E3SM
-cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --compset CMPASO-JRA1p4 --res TL319_IcoswISC30E3r5 --machine pm-cpu-generic --compiler gnu
 ```
 
 On Perlmutter, a smaller C case with 1, 2, or 4 MPI processses:
 ```
-cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine pm-cpu --compiler gnu
+cime/scripts/create_newcase --case <case> --output-root /path/to/E3SM/<case> --handle-preexisting-dirs u --res T62_oQU480 --compset CMPASO-NYF --machine pm-cpu-generic --compiler gnu
 ```
 
-Note: `pm-cpu` above is perlmutter-cpu.
+Note: `pm-cpu-generic` above is perlmutter-cpu with minimal other settings.
 
 On smaller workstations (eg., ANL's GCE machines), a smaller C case with 1, 2, or 4  MPI processes:
 
@@ -171,8 +185,6 @@ cd /path/to/E3SM/<case>
 
 ./case.setup --reset                    # --reset is optional, if case was setup before
 
-# for Perlmutter
-patch env_mach_specific.xml /path/to/e3sm-workflow/pm-cpu_env_mach_specific.patch
 # for ANL GCE
 patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific.patch
 
