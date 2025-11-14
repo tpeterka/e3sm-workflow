@@ -30,34 +30,28 @@ The instructions in this README are divided into the following main steps:
 Preliminary steps include setting up your shell environment, loading/unloading
 modules, and configuring your spack installation.
 
-### (For Perlmutter) Edit `~/.spack/packages.yaml` to use the system-installed mpich
+### (For Perlmutter) Edit `~/.spack/packages.yaml` to use a newer mpich than Cray's
 
 ```
 packages:
   mpich:
-    buildable: false
     externals:
-    - spec: mpich@3
-      prefix: /opt/cray/pe/mpich/8.1.30/ofi/gnu/12.3
-      modules:
-      - cray-mpich/8.1.30
+    - spec: mpich@4
+      prefix: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install
       extra_attributes:
         environment:
           prepend_path:
-            LD_LIBRARY_PATH: /opt/cray/libfabric/1.22.0/lib64
-  libfabric:
+            LD_LIBRARY_PATH: /pscratch/sd/t/tpeterka/software/mpich-4.3.0/install/lib:/opt/cray/libfabric/1.22.0/lib64
     buildable: false
-    externals:
-    - spec: libfabric@1.22.0
-      modules:
-      - libfabric/1.22.0
 ```
 
 ### (For Perlmutter) Unload Cray programming environment and add mpich to your path
 
 ```
 module unload PrgEnv-gnu/8.5.0
-export PATH=/opt/cray/pe/mpich/8.1.30/ofi/gnu/12.3/bin:$PATH
+export PATH=$HOME/bin:$PSCRATCH/software/mpich-4.3.0/install/bin:$PATH
+export LD_LIBRARY_PATH=$PSCRATCH/software/mpich-4.3.0/install/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$LD_LIBRARY_PATHj
 ```
 
 -----
@@ -198,7 +192,7 @@ patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
-### The first time, patch the E3SM cmake files
+### For a new or reset case setup, patch the E3SM cmake files
 
 ```
 cd /path/to/E3SM
