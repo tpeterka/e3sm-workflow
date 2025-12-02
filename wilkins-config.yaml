@@ -1,7 +1,7 @@
 # change the paths below to your own
 tasks:
-  - func: "/pscratch/sd/t/tpeterka/software/E3SMv3/ccase1/ccase1/bld/e3sm_shared.so"
-    nprocs: 128
+  - func: "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so"
+    nprocs: 2
     inports:
       - filename: "*.nc"
         dsets:
@@ -16,7 +16,7 @@ tasks:
             metadata: 0
   - func: "/global/homes/t/tpeterka/software/e3sm-workflow/analysis.py"
     nprocs: 1
-    args: ["/pscratch/sd/t/tpeterka/software/E3SMv3/ccase1/ccase1/run/ccase1.mpaso.rst.0001-01-06_00000.nc", "xtime"]
+    args: ["/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.rst.0001-01-06_00000.nc", "xtime"]
     inports:
       - filename: "*.nc"
         dsets:

@@ -18,7 +18,7 @@ nm = h.NameMap()
 
 if pm.group() == "producer":
     tag = 0
-    lowfive.create_logger("trace")
+#     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("consumer", tag))
 #     vol = lowfive.create_VOLBase()
     if passthru:
@@ -28,7 +28,7 @@ if pm.group() == "producer":
     vol.set_intercomm("*", "*", 0)
 
     # set the following path to your installation of the producer task
-    prod = h.Puppet("/pscratch/sd/t/tpeterka/software/E3SMv3/ccase1/ccase1/bld/e3sm_shared.so", [], pm, nm)
+    prod = h.Puppet("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so", [], pm, nm)
 
     prod.proceed()
 
@@ -36,7 +36,7 @@ if pm.group() == "producer":
         h.to_mpi4py(pm.intercomm("consumer", tag)).barrier()
 else:
     tag = 0
-    lowfive.create_logger("trace")
+#     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("producer", tag))
 #     vol = lowfive.create_VOLBase()
     if passthru:

@@ -2,20 +2,20 @@ export WILKINS=`spack location -i wilkins`
 
 # comment/uncomment the appropriate block below depending on the number of MPI processes being used
 
-echo "Running 128 producer processes only"
-
-# change the path below to your own
-srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 python3 -u \
-$WILKINS/bin/wilkins-master.py \
-/global/homes/t/tpeterka/software/e3sm-workflow/wilkins-config-prod-only.yaml \
--v 2 \
-2>&1 | tee wilkins-run-log.txt
-
-# echo "Running 16 producer processes only"
+# echo "Running 128 producer processes only"
 # 
 # # change the path below to your own
-# srun  --label  -n 16 -N 1 -c 2  --cpu_bind=cores  -m plane=128 python3 -u \
+# srun  --label  -n 128 -N 1 -c 2  --cpu_bind=cores  -m plane=128 python3 -u \
 # $WILKINS/bin/wilkins-master.py \
 # /global/homes/t/tpeterka/software/e3sm-workflow/wilkins-config-prod-only.yaml \
 # -v 2 \
 # 2>&1 | tee wilkins-run-log.txt
+
+echo "Running 2 producer processes only"
+
+# change the path below to your own
+srun  --label  -n 2 -N 1 -c 2  --cpu_bind=cores  -m plane=128 python3 -u \
+$WILKINS/bin/wilkins-master.py \
+/global/homes/t/tpeterka/software/e3sm-workflow/wilkins-config-prod-only.yaml \
+-v 2 \
+2>&1 | tee wilkins-run-log.txt
