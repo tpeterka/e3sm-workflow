@@ -24,8 +24,8 @@ spack add henson+python+mpi-wrappers
 spack add netcdf-c@4.9+mpi
 spack add parallel-netcdf
 spack add netcdf-fortran@4.5.3
-spack add py-pip
-# spack add py-netcdf4+mpi
+# spack add py-pip
+spack add py-netcdf4+mpi
 
 # install everything in environment
 echo "installing dependencies in environment"

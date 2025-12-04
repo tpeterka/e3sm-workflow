@@ -1,10 +1,10 @@
 from netCDF4 import Dataset
-# import sys
+import sys
 
 # print("analysis starting up, argv[0]", sys.argv[0], "argv[1]", sys.argv[1], "argv[2]", sys.argv[2])
-print("analysis starting up")
+# print("analysis starting up")
 
-filename = "/pscratch/sd/t/tpeterka/software/E3SMv3/ccase1/ccase1/run/ccase1.mpaso.rst.0001-01-06_00000.nc"
+filename = "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.rst.0001-01-06_00000.nc"
 varname = "xtime"
 
 # rootgrp = Dataset(sys.argv[1])
