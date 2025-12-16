@@ -9,15 +9,14 @@ These instructions have been tested on the Perlmutter CPU partition at NERSC.
 Other machines will be similar, but not tested.
 Instructions that are specific to Perlmutter have been noted.
 
-Installation is done through Spack.
-If you don't have Spack installed or if Spack is new to you, go [here](https://spack.readthedocs.io/en/latest/) first.
 The recommended compiler is gcc version >= 12. All of the following instructions are for gnu.
 
 The instructions in this README are divided into the following main steps:
 
 - Preliminaries
 - Cloning this repository and setting up a spack environment
-- Cloning the E3SM repository and setting up an ocean test case
+- Setting up E3SM
+- Setting up an ocean test case
 - Building E3SM to run in a workflow
 - Testing the E3SM build
 - Configuring the workflow
@@ -30,7 +29,17 @@ The instructions in this README are divided into the following main steps:
 Preliminary steps include setting up your shell environment, loading/unloading
 modules, and configuring your spack installation.
 
-### (For Perlmutter) Edit `~/.spack/packages.yaml` to use a newer mpich than Cray's
+### Clone and install Spack if you don't already have it in your own home, project, or scratch directory
+
+All software installation is done through Spack.
+We will use the environments feature of Spack (analogous to Conda environments) to manage all the software dependencies.
+
+First, install your own instance of Spack yourself, rather than relying on a system-installed version of Spack, so that you have complete control over all software versions.
+If you don't have your own Spack installation, follow the instructions [here](https://spack.readthedocs.io/en/latest/) first.
+
+### (For Perlmutter) Edit `~/.spack/packages.yaml` to use a newer MPI (mpich) than Cray's
+
+This will point Spack to use an external mpich that I previously installed on Perlmutter. You should not install your own mpich. Instead, tell Spack to use mine as follows.
 
 ```
 packages:
@@ -45,7 +54,7 @@ packages:
     buildable: false
 ```
 
-### (For Perlmutter) Unload Cray programming environment and add mpich to your path
+### (For Perlmutter) Unload Cray programming environment and add my mpich to your path
 
 ```
 module unload PrgEnv-gnu/8.5.0
@@ -56,7 +65,7 @@ export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$LD_LIBRARY_PATHj
 
 -----
 
-## Cloning this repository and setting up a Spack environment
+## Cloning this repository and setting up a Spack environment for e3sm-workflow
 
 ### Clone this repository
 
@@ -80,7 +89,7 @@ git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
 ```
 
-### Set up the Spack environment
+### Set up the Spack environment for e3sm-workflow
 
 First time: create and load the Spack environment
 
@@ -94,7 +103,7 @@ Subsequent times: just load the Spack environment. `source /path/to/e3sm-workflo
 
 -----
 
-## Cloning the E3SM repository and setting up an ocean test case
+## Setting up E3SM
 
 ### Clone the E3SM repository
 
@@ -124,16 +133,17 @@ git config --global user.email "<your email address>"
 git config --global user.name "<your name>"
 ```
 
------
-
-## Create an ocean test case (C case)
-
-### The first time, patch the E3SM machine configuration
+### Patch the E3SM machine configuration and cmake
 
 ```
 cd /path/to/E3SM
 patch cime_config/machines/config_machines.xml /path/to/e3sm-workflow/conf_machines.patch
+git apply /path/to/e3sm-workflow/E3SM.patch
 ```
+
+-----
+
+## Setting up an ocean test case (C case)
 
 ### Create a new case
 
@@ -179,9 +189,10 @@ cd /path/to/E3SM/<case>
 
 ./case.setup --reset                    # --reset is optional, if case was setup before
 
+patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
+
 # for ANL GCE
 patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific.patch
-
 
 ./preview_run
 ```
@@ -191,15 +202,6 @@ patch env_mach_specific.xml /path/to/e3sm-workflow/anlgce-ub22_env_mach_specific
 ## Building E3SM to run in a workflow
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
-
-### For a new or reset case setup, patch the E3SM cmake files
-
-```
-cd /path/to/E3SM
-git apply /path/to/e3sm-workflow/E3SM.patch
-cd /path/to/E3SM/<case>
-patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
-```
 
 ### Build E3SM
 
@@ -221,7 +223,6 @@ the files as follows:
 ```
 cd /path/to/E3SM/<case>
 ./case.setup --reset
-patch env_mach_specific.xml /path/to/e3sm-workflow/<machine>_env_mach_specific.patch
 patch cmake_macros/universal.cmake /path/to/e3sm-workflow/universal.cmake.patch
 ```
 

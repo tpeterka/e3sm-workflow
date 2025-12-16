@@ -2,6 +2,7 @@
 tasks:
   - func: "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so"
     nprocs: 2
+    actions: ["actions", "callback"]
     inports:
       - filename: "*.nc"
         dsets:
@@ -9,17 +10,17 @@ tasks:
             passthru: 1
             metadata: 0
     outports:
-      - filename: "*.nc"
+      - filename: "*ccase2.mpaso.rst.0001-01-06_00000.nc"
         dsets:
           - name: "*"
-            passthru: 1
-            metadata: 0
+            passthru: 0
+            metadata: 1
   - func: "/global/homes/t/tpeterka/software/e3sm-workflow/analysis.py"
     nprocs: 1
-    args: ["/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.rst.0001-01-06_00000.nc", "xtime"]
+    args: ["--filename", "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.rst.0001-01-06_00000.nc", "--dataset", "xtime"]
     inports:
-      - filename: "*.nc"
+      - filename: "*ccase2.mpaso.rst.0001-01-06_00000.nc"
         dsets:
           - name: "*"
-            passthru: 1
-            metadata: 0
+            passthru: 0
+            metadata: 1

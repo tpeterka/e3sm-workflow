@@ -18,14 +18,13 @@ spack env activate $SPACKENV
 spack add mpich
 spack add hdf5@1.14+hl+mpi
 spack add lowfive
-spack add wilkins
+spack add wilkins ^python@3.13
 # spack develop henson+python+mpi-wrappers
-spack add henson+python+mpi-wrappers
+spack add henson+python+mpi-wrappers ^python@3.13
 spack add netcdf-c@4.9+mpi
 spack add parallel-netcdf
 spack add netcdf-fortran@4.5.3
-# spack add py-pip
-spack add py-netcdf4+mpi
+spack add py-netcdf4+mpi ^python@3.13
 
 # install everything in environment
 echo "installing dependencies in environment"

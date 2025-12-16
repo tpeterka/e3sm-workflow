@@ -1,19 +1,29 @@
 from netCDF4 import Dataset
 import sys
+import argparse
 
-# print("analysis starting up, argv[0]", sys.argv[0], "argv[1]", sys.argv[1], "argv[2]", sys.argv[2])
-# print("analysis starting up")
+def main(raw_args=None):
 
-filename = "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.rst.0001-01-06_00000.nc"
-varname = "xtime"
+    print("analysis starting up")
 
-# rootgrp = Dataset(sys.argv[1])
-rootgrp = Dataset(filename)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--filename', dest='filename')
+    parser.add_argument('--dataset', dest='dataset')
+    config = parser.parse_args(raw_args)
 
-# print("input file: ", sys.argv[1], " dataset ", sys.argv[2], ":")
-# print(rootgrp.variables[sys.argv[2]][:])
-print("input file: ", filename, " dataset ", varname, ":")
-print(rootgrp.variables[varname][:])
+    filename = config.filename
+    varname = config.dataset
 
-rootgrp.close()
-print("analysis completed successfully")
+    print("filename = ", filename)
+    print("varname = ", varname)
+
+    rootgrp = Dataset(filename)
+
+    print("input file: ", filename, " dataset ", varname, ":")
+    print(rootgrp.variables[varname][:])
+
+    rootgrp.close()
+    print("analysis completed successfully")
+
+if __name__ == "__main__":
+    main()
