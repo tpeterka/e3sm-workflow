@@ -21,11 +21,13 @@ if pm.group() == "producer":
 #     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("consumer", tag))
 #     vol = lowfive.create_VOLBase()
+    vol.set_passthru("*", "*")
     if passthru:
-        vol.set_passthru("*", "*")
+        print("*** henson passthru mode")
+        vol.set_passthru("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
     else:
-        vol.set_memory("*", "*")
-    vol.set_intercomm("*", "*", 0)
+        vol.set_memory("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
+        vol.set_intercomm("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*", 0)
 
     # set the following path to your installation of the producer task
     prod = h.Puppet("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so", [], pm, nm)
@@ -39,14 +41,17 @@ else:
 #     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("producer", tag))
 #     vol = lowfive.create_VOLBase()
+    vol.set_passthru("*", "*")
     if passthru:
-        vol.set_passthru("*", "*")
+        vol.set_passthru("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
     else:
-        vol.set_memory("*", "*")
-    vol.set_intercomm("*", "*", 0)
+        vol.set_memory("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
+        vol.set_intercomm("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*", 0)
+
+    # set the following path to your installation of the analysis task
+    cons = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/install/bin/consumer.so",
+                   ["-f", "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"], pm, nm)
 
     if passthru:
         h.to_mpi4py(pm.intercomm("producer", tag)).barrier()
-
-    # set the following path to your installation of the analysis task
-    importlib.import_module("/global/homes/t/tpeterka/software/e3sm-workflow/analysis.py")
+    cons.proceed()

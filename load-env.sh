@@ -12,7 +12,6 @@ export MPAS_EXTERNAL_LIBS="${MPAS_EXTERNAL_LIBS} -lgomp"
 export NETCDF=`spack location -i netcdf-c`
 export NETCDFF=`spack location -i netcdf-fortran`
 export PNETCDF=`spack location -i parallel-netcdf`
-# export PIO=`spack location -i mpas-o-scorpio`
 export HDF5=`spack location -i hdf5`
 export LOWFIVE=`spack location -i lowfive`
 export HENSON=`spack location -i henson`
@@ -24,6 +23,10 @@ export MPAS_SHELL=/bin/bash
 export CORE=ocean
 export SHAREDLIB=true
 export PROFILE_PRELIB="-L$HENSON/lib -lhenson-pmpi"
+
+# optional when DIY and fmt are installed
+export DIY_PATH=`spack location -i diy`
+export FMT_PATH=`spack location -i fmt`
 
 # set E3SM case setup env vars
 export NETCDF_C_PATH=$NETCDF
