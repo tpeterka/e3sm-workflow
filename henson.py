@@ -10,7 +10,7 @@ import time
 world = MPI.COMM_WORLD.Dup()
 size = world.Get_size()
 
-passthru = True
+passthru = False
 consumer_procs = 1
 
 pm = h.ProcMap(world, [("producer", size - consumer_procs), ("consumer", consumer_procs)])
@@ -23,13 +23,11 @@ if pm.group() == "producer":
 #     vol = lowfive.create_VOLBase()
     vol.set_passthru("*", "*")
     if passthru:
-        print("*** henson passthru mode")
-        vol.set_passthru("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
+        vol.set_passthru("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
     else:
-        vol.set_memory("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
-        vol.set_intercomm("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*", 0)
+        vol.set_memory("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
+        vol.set_intercomm("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*", 0)
 
-    # set the following path to your installation of the producer task
     prod = h.Puppet("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so", [], pm, nm)
 
     prod.proceed()
@@ -41,16 +39,14 @@ else:
 #     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("producer", tag))
 #     vol = lowfive.create_VOLBase()
-    vol.set_passthru("*", "*")
     if passthru:
-        vol.set_passthru("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
+        vol.set_passthru("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
     else:
-        vol.set_memory("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
-        vol.set_intercomm("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*", 0)
+        vol.set_memory("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
+        vol.set_intercomm("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*", 0)
 
-    # set the following path to your installation of the analysis task
     cons = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/install/bin/consumer.so",
-                   ["-f", "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/run/ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"], pm, nm)
+                    ["-f", "ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"], pm, nm)
 
     if passthru:
         h.to_mpi4py(pm.intercomm("producer", tag)).barrier()

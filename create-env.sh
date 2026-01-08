@@ -17,6 +17,7 @@ spack env activate $SPACKENV
 
 spack add mpich
 spack add hdf5@1.14+hl+mpi
+# spack develop lowfive
 spack add lowfive
 spack add wilkins ^python@3.13
 # spack develop henson+python+mpi-wrappers

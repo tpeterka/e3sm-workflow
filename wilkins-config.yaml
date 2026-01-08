@@ -2,25 +2,27 @@
 tasks:
   - func: "/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so"
     nprocs: 2
-    actions: ["actions", "callback"]
+    #actions: ["actions", "callback"]
     inports:
-      - filename: "/global/cfs/cdirs/e3sm/inputdata/*.nc"
+      - filename: "*.nc"
         dsets:
           - name: "*"
             passthru: 1
             metadata: 0
     outports:
-      - filename: "*ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"
+      - filename: "*ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"
         dsets:
           - name: "*"
-            passthru: 0
-            metadata: 1
-  - func: "/global/homes/t/tpeterka/software/e3sm-workflow/analysis.py"
+            passthru: 1
+            metadata: 0
+  #- func: "/global/homes/t/tpeterka/software/e3sm-workflow/analysis.py"
+  - func: "/global/homes/t/tpeterka/software/e3sm-workflow/install/bin/consumer.so"
     nprocs: 1
-    args: ["--filename", "ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "--dataset", "xtime"]
+    #args: ["--filename", "ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "--dataset", "xtime"]
+    args: ["-f", "ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"]
     inports:
-      - filename: "*ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"
+      - filename: "*ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"
         dsets:
           - name: "*"
-            passthru: 0
-            metadata: 1
+            passthru: 1
+            metadata: 0
