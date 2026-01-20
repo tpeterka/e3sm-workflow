@@ -232,6 +232,13 @@ development.
 
 -----
 
+## Editing `streams.ocean`
+
+Edit `/path/to/E3SM/<case>/<case>/run/streams.ocean` to change any instances of `clobber_mode="append"` to
+`clobber_mode="truncate"`.
+
+-----
+
 ## Testing the E3SM build
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
