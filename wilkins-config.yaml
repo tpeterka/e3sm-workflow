@@ -10,7 +10,7 @@ tasks:
             passthru: 1
             metadata: 0
     outports:
-      - filename: "*ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"
+      - filename: "*ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"
         dsets:
           - name: "*"
             passthru: 1
@@ -18,10 +18,9 @@ tasks:
   #- func: "/global/homes/t/tpeterka/software/e3sm-workflow/analysis.py"
   - func: "/global/homes/t/tpeterka/software/e3sm-workflow/install/bin/consumer.so"
     nprocs: 1
-    #args: ["--filename", "ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "--dataset", "xtime"]
-    args: ["-f", "ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"]
+    args: ["--infile", "ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "--dataset", "ssh"]
     inports:
-      - filename: "*ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"
+      - filename: "*ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"
         dsets:
           - name: "*"
             passthru: 1

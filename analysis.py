@@ -7,20 +7,19 @@ def main(raw_args=None):
     print("analysis starting up")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--filename', dest='filename')
+    parser.add_argument('--infile', dest='infile')
     parser.add_argument('--dataset', dest='dataset')
     config = parser.parse_args(raw_args)
 
-    filename = config.filename
-    varname = config.dataset
+    infile = config.infile
+    dataset = config.dataset
 
-    print("filename = ", filename)
-    print("varname = ", varname)
+    print("infile = ", infile)
+    print("dataset = ", dataset)
 
-    rootgrp = Dataset(filename)
+    rootgrp = Dataset(infile)
 
-    print("input file: ", filename, " dataset ", varname, ":")
-    print(rootgrp.variables[varname][:])
+    print(rootgrp.variables[dataset][:])
 
     rootgrp.close()
     print("analysis completed successfully")

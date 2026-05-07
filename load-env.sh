@@ -47,11 +47,6 @@ export LD_LIBRARY_PATH=$LOWFIVE/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$HENSON/lib:$LD_LIBRARY_PATH
 echo "library paths are set for running E3SM"
 
-# set python path
-export SPACK=`spack location -r`
-export PYTHONPATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/lib/python3.11/site-packages:/pscratch/sd/t/tpeterka/software/spack/var/spack/environments/mpas/.spack-env/view/lib:$PYTHONPATH
-export PATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin:$PATH
-
 # enable VOL plugin
 unset HDF5_PLUGIN_PATH
 unset HDF5_VOL_CONNECTOR

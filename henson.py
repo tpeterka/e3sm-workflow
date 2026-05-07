@@ -23,12 +23,9 @@ if pm.group() == "producer":
 #     vol = lowfive.create_VOLBase()
     vol.set_passthru("*", "*")
     if passthru:
-#         vol.set_passthru("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
         vol.set_passthru("ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
     else:
-#         vol.set_memory("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
         vol.set_memory("ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
-#         vol.set_intercomm("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*", 0)
         vol.set_intercomm("ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*", 0)
 
     prod = h.Puppet("/pscratch/sd/t/tpeterka/software/E3SM/ccase2/ccase2/bld/e3sm_shared.so", [], pm, nm)
@@ -43,18 +40,14 @@ else:
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("producer", tag))
 #     vol = lowfive.create_VOLBase()
     if passthru:
-#         vol.set_passthru("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
         vol.set_passthru("ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
     else:
-#         vol.set_memory("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*")
         vol.set_memory("ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*")
-#         vol.set_intercomm("ccase2.mpaso.hist.am.globalStats.0001-01-01.nc", "*", 0)
         vol.set_intercomm("ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc", "*", 0)
 
-#     cons = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/install/bin/consumer.so",
-#                     ["-f", "ccase2.mpaso.hist.am.globalStats.0001-01-01.nc"], pm, nm)
     cons = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/install/bin/consumer.so",
-                    ["-f", "ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc"], pm, nm)
+                    ["--infile", "ccase2.mpaso.hist.am.highFrequencyOutput.0001-01-01_00.00.00.nc",
+                     "--dataset", "ssh"], pm, nm)
 
     if passthru:
         h.to_mpi4py(pm.intercomm("producer", tag)).barrier()

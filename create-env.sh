@@ -27,7 +27,7 @@ spack add parallel-netcdf
 spack add netcdf-fortran@4.5.3
 spack add py-netcdf4+mpi ^python@3.13
 # following are optional for testing c++ consumer
-spack add diy
+spack add diy@master
 spack add fmt
 
 # install everything in environment
