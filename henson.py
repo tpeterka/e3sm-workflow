@@ -18,7 +18,7 @@ nm = h.NameMap()
 
 if pm.group() == "producer":
     tag = 0
-#     lowfive.create_logger("trace")
+    lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("consumer", tag))
 #     vol = lowfive.create_VOLBase()
     vol.set_passthru("*", "*")
@@ -36,7 +36,7 @@ if pm.group() == "producer":
         h.to_mpi4py(pm.intercomm("consumer", tag)).barrier()
 else:
     tag = 0
-#     lowfive.create_logger("trace")
+    lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("producer", tag))
 #     vol = lowfive.create_VOLBase()
     if passthru:

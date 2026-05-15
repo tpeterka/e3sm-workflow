@@ -89,6 +89,11 @@ git clone https://github.com/orcunyildiz/wilkins
 spack repo add wilkins
 ```
 
+Add the esm_watermasses repository to your Spack installation
+```
+spack repo add esm_watermasses
+```
+
 ### Set up the Spack environment for e3sm-workflow
 
 First time: create and load the Spack environment
@@ -327,7 +332,7 @@ and rename `blank.nc` to name of the file given in the first argument to the ana
 
 -----
 
-## Running the workflow
+## Running the E3SM->consumer workflow
 
 The spack environment should have been loaded (`source /path/to/e3sm-workflow/load-env.sh`)
 
@@ -339,3 +344,14 @@ salloc --nodes <num_nodes> --qos interactive --time 30:00 --constraint cpu --acc
 /path/to/e3sm-workflow/wilkins-run.sh
 ```
 -----
+
+## Running the esm_watermasses only workflow
+
+Use a special load script that does not activate the spack environment because of a lua conflict with slurm:
+```
+source /path/to/e3sm-workflow/load-env-watermasses.sh
+cd /global/cfs/cdirs/m4259/esm_watermasses
+salloc --nodes <num_nodes> --qos interactive --time 30:00 --constraint cpu --account=<your-account>
+/path/to/e3sm-workflow/wilkins-run-watermasses-only.sh
+
+

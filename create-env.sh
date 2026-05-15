@@ -30,6 +30,16 @@ spack add py-netcdf4+mpi ^python@3.13
 spack add diy@master
 spack add fmt
 
+# following are for esm_watermasses
+spack add py-numpy ^python@3.13
+spack add py-scipy ^python@3.13
+spack add py-pyyaml ^python@3.13
+spack add py-xarray ^python@3.13
+spack add py-tqdm ^python@3.13
+spack add nco ^python@3.13
+spack add py-pip ^python@3.13
+spack add esm_watermasses
+
 # install everything in environment
 echo "installing dependencies in environment"
 spack install henson        # install henson so that henson path is set

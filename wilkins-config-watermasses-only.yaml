@@ -1,0 +1,17 @@
+# change the paths below to your own
+tasks:
+  - func: "/pscratch/sd/t/tpeterka/software/spack/var/spack/environments/e3sm-env/.spack-env/view/bin/esm_watermasses.py"
+    nprocs: 1
+    args: ["results", "-f 0", "parameters_template.yaml"]
+    inports:
+      - filename: "*v3.GMPAS-JRA1p5_EC30to60E2r2_geom.mpaso.hist.am.timeSeriesStatsMonthly.*.nc"
+        dsets:
+          - name: "*"
+            passthru: 1
+            metadata: 0
+    outports:
+      - filename: "*.nc"
+        dsets:
+          - name: "*"
+            passthru: 1
+            metadata: 0

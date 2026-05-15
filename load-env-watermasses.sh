@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# activate the environment
-export SPACKENV=e3sm-env
-spack env deactivate > /dev/null 2>&1
-spack env activate $SPACKENV
-echo "activated spack environment $SPACKENV"
-
 # set spack locations and vars for building
 export MPAS_EXTERNAL_LIBS=""
 export MPAS_EXTERNAL_LIBS="${MPAS_EXTERNAL_LIBS} -lgomp"
@@ -47,6 +41,11 @@ export LD_LIBRARY_PATH=$LOWFIVE/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$HENSON/lib:$LD_LIBRARY_PATH
 echo "library paths are set for running E3SM"
 
+# for perlmutter
+export SPACK=`spack location -r`
+export PYTHONPATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/lib/python3.13/site-packages:/pscratch/sd/t/tpeterka/software/spack/var/spack/environments/e3sm-env/.spack-env/view/lib:$PYTHONPATH
+export PATH=$SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin:$PATH
+
 # enable VOL plugin
 unset HDF5_PLUGIN_PATH
 unset HDF5_VOL_CONNECTOR
@@ -67,5 +66,6 @@ pip3 install fastjmd95
 pip3 install pop-tools
 export ESM_WATERMASSES=`spack location -i esm_watermasses`
 python3 -m pip install --no-deps --no-build-isolation -e $ESM_WATERMASSES
+cp $SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin/esm_watermasses $SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin/esm_watermasses.py
 
 
