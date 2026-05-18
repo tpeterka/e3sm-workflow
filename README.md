@@ -347,7 +347,7 @@ salloc --nodes <num_nodes> --qos interactive --time 30:00 --constraint cpu --acc
 
 ## Running the esm_watermasses only workflow
 
-Use a special load script that does not activate the spack environment because of a lua conflict with slurm:
+For Perlmutter, use a special load script that does not activate the spack environment because of a lua conflict with slurm:
 ```
 source /path/to/e3sm-workflow/load-env-watermasses.sh
 cd /global/cfs/cdirs/m4259/esm_watermasses
