@@ -35,12 +35,26 @@ set_target_properties       (consumer-netcdf PROPERTIES PREFIX "")
 set_target_properties       (consumer-netcdf PROPERTIES SUFFIX ".so")
 set_target_properties       (consumer-netcdf PROPERTIES LINK_FLAGS ${linker_flags})
 
+add_library                 (producer-ssh-netcdf SHARED producer-ssh-netcdf.cpp)
+target_link_libraries       (producer-ssh-netcdf ${libraries})
+set_target_properties       (producer-ssh-netcdf PROPERTIES PREFIX "")
+set_target_properties       (producer-ssh-netcdf PROPERTIES SUFFIX ".so")
+set_target_properties       (producer-ssh-netcdf PROPERTIES LINK_FLAGS ${linker_flags})
+
+add_library                 (consumer-ssh-netcdf SHARED consumer-ssh-netcdf.cpp)
+target_link_libraries       (consumer-ssh-netcdf ${libraries})
+set_target_properties       (consumer-ssh-netcdf PROPERTIES PREFIX "")
+set_target_properties       (consumer-ssh-netcdf PROPERTIES SUFFIX ".so")
+set_target_properties       (consumer-ssh-netcdf PROPERTIES LINK_FLAGS ${linker_flags})
+
 install                     (TARGETS
                             consumer
                             producer-hdf5
                             consumer-hdf5
                             producer-netcdf
                             consumer-netcdf
+                            producer-ssh-netcdf
+                            consumer-ssh-netcdf
                             DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
                             PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
                             GROUP_READ GROUP_WRITE GROUP_EXECUTE
