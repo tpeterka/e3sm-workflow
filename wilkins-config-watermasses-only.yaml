@@ -1,7 +1,7 @@
-# change the paths below to your own
 tasks:
-  - func: "/pscratch/sd/t/tpeterka/software/spack/opt/spack/linux-zen3/esm_watermasses-main-2w252ut44o7sgp2a6labx755ho7c7uvh/esm_watermasses/__main__.py"
+  - func: "/pscratch/sd/t/tpeterka/software/spack/opt/spack/linux-zen3/esm_watermasses-main-2w252ut44o7sgp2a6labx755ho7c7uvh/esm_watermasses/watermasses.py"
     nprocs: 1
+    #args: ["coords", "parameters_template.yaml"]
     args: ["results", "-f", "0", "parameters_template.yaml"]
     inports:
       - filename: "*v3.GMPAS-JRA1p5_EC30to60E2r2_geom.mpaso.hist.am.timeSeriesStatsMonthly.*.nc"

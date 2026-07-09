@@ -17,7 +17,7 @@ nm = h.NameMap()
 
 if pm.group() == "producer":
     tag = 0
-    lowfive.create_logger("trace")
+#     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("consumer", tag))
     if passthru:
         vol.set_passthru("*", "*")
@@ -26,7 +26,7 @@ if pm.group() == "producer":
 #     vol.set_intercomm("*", "*", 0)
 
     # set the following path to point to your installation of producer
-    prod = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/build/src/producer-netcdf.so", [], pm, nm)
+    prod = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/build/src/producer-ssh-netcdf.so", [], pm, nm)
 
     prod.proceed()
 
@@ -43,7 +43,7 @@ else:
     vol.set_intercomm("*", "*", 0)
 
     # set the following path to point to your installation of consumer
-    cons = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/build/src/consumer-netcdf.so", [], pm, nm)
+    cons = h.Puppet("/global/homes/t/tpeterka/software/e3sm-workflow/build/src/consumer-ssh-netcdf.so", [], pm, nm)
 
     if passthru:
         h.to_mpi4py(pm.intercomm("producer", tag)).barrier()

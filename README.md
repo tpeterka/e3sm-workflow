@@ -350,8 +350,22 @@ salloc --nodes <num_nodes> --qos interactive --time 30:00 --constraint cpu --acc
 For Perlmutter, use a special load script that does not activate the spack environment because of a lua conflict with slurm:
 ```
 source /path/to/e3sm-workflow/load-env-watermasses.sh
+``
+
+Copy the spack-installed esm_watermasses main script to a different name:
+```
+cp $ESM_WATERMASSES/esm_watermasses/__main__.py $ESM_WATERMASSES/esm_watermasses/watermasses.py
+```
+
+Edit the spack-installed `watermasses.py` to add command line arguments to `main()`:
+- Change line 15 from `def main():` to `def main(raw_args=None):`
+- Change line 38 from `    args = parser.parse_args()` to `    args = parser.parse_args(raw_args)`
+
+Run the workflow:
+```
 cd /global/cfs/cdirs/m4259/esm_watermasses
 salloc --nodes <num_nodes> --qos interactive --time 30:00 --constraint cpu --account=<your-account>
 /path/to/e3sm-workflow/wilkins-run-watermasses-only.sh
+```
 
 

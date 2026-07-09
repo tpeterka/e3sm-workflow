@@ -104,8 +104,8 @@ int main(int argc, char** argv)
     err = nc_get_vara_float(ncid, varid, &starts[0], &counts[0], &ssh[0]); ERR
 
     // print ssh
-    for (auto i = 0; i < ssh.size(); i++)
-        fmt::print(stderr, "ssh[{}] = {}\n", my_cell_start + i, ssh[i]);
+//     for (auto i = 0; i < ssh.size(); i++)
+//         fmt::print(stderr, "ssh[{}] = {}\n", my_cell_start + i, ssh[i]);
 
     // close file
     err = nc_close(ncid); ERR

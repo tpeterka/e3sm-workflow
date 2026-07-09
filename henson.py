@@ -10,7 +10,7 @@ import time
 world = MPI.COMM_WORLD.Dup()
 size = world.Get_size()
 
-passthru = False
+passthru = True
 consumer_procs = 1
 
 pm = h.ProcMap(world, [("producer", size - consumer_procs), ("consumer", consumer_procs)])
@@ -18,7 +18,7 @@ nm = h.NameMap()
 
 if pm.group() == "producer":
     tag = 0
-    lowfive.create_logger("trace")
+#     lowfive.create_logger("trace")
     vol = lowfive.create_DistMetadataVOL(pm.local(), pm.intercomm("consumer", tag))
 #     vol = lowfive.create_VOLBase()
     vol.set_passthru("*", "*")

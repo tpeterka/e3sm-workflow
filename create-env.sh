@@ -17,8 +17,8 @@ spack env activate $SPACKENV
 
 spack add mpich
 spack add hdf5@1.14+hl+mpi
-spack develop lowfive
-# spack add lowfive
+# spack develop lowfive
+spack add lowfive
 spack add wilkins ^python@3.13
 # spack develop henson+python+mpi-wrappers
 spack add henson+python+mpi-wrappers ^python@3.13
@@ -31,14 +31,14 @@ spack add diy@master
 spack add fmt
 
 # following are for esm_watermasses
-# spack add py-numpy ^python@3.13
-# spack add py-scipy ^python@3.13
-# spack add py-pyyaml ^python@3.13
-# spack add py-xarray ^python@3.13
-# spack add py-tqdm ^python@3.13
-# spack add nco ^python@3.13
-# spack add py-pip ^python@3.13
-# spack add esm_watermasses
+spack add py-numpy ^python@3.13
+spack add py-scipy ^python@3.13
+spack add py-pyyaml ^python@3.13
+spack add py-xarray ^python@3.13
+spack add py-tqdm ^python@3.13
+spack add nco ^python@3.13
+spack add py-pip ^python@3.13
+spack add esm_watermasses
 
 # install everything in environment
 echo "installing dependencies in environment"
