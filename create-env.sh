@@ -38,7 +38,7 @@ spack add py-xarray ^python@3.13
 spack add py-tqdm ^python@3.13
 spack add nco ^python@3.13
 spack add py-pip ^python@3.13
-spack add esm_watermasses
+spack add esm_watermasses+wilkins
 
 # install everything in environment
 echo "installing dependencies in environment"

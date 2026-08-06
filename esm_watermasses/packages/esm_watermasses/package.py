@@ -18,6 +18,17 @@ class EsmWatermasses(Package):
 
     version('main', branch='main')
 
+    variant(
+        "wilkins",
+        default=False,
+        description="Minor modifications to enable running with Wilkins workflow manager",
+    )
+
     def install(self, spec, prefix):
         # install_tree copies all files from source stage to prefix
         install_tree('.', prefix)
+
+        if "+wilkins" in spec:
+            src = join_path(prefix, "esm_watermasses", "__main__.py")
+            dst = join_path(prefix, "esm_watermasses", "watermasses.py")
+            install(src, dst)
