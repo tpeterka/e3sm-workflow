@@ -1,5 +1,6 @@
 tasks:
-  - func: "/pscratch/sd/t/tpeterka/software/spack/opt/spack/linux-zen3/esm_watermasses-main-2w252ut44o7sgp2a6labx755ho7c7uvh/esm_watermasses/watermasses.py"
+  - func: "/pscratch/sd/t/tpeterka/software/spack/opt/spack/linux-zen3/python-3.13.8-yijjsarxhkp56h7isujo2pzjsffndunj/bin/esm_watermasses.py"
+  #- func: "/pscratch/sd/t/tpeterka/software/spack/opt/spack/linux-zen3/esm_watermasses-main-rnejxxwfi2k5ekyri5hiwqvukrjn6qtt/esm_watermasses/watermasses.py"
     nprocs: 1
     #args: ["coords", "parameters_template.yaml"]
     args: ["results", "-f", "0", "parameters_template.yaml"]

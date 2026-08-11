@@ -65,7 +65,7 @@ echo "installing python packages for esm_watermasses"
 pip3 install fastjmd95
 pip3 install pop-tools
 export ESM_WATERMASSES=`spack location -i esm_watermasses`
-# python3 -m pip install --no-deps --no-build-isolation -e $ESM_WATERMASSES
+python3 -m pip install --no-deps --no-build-isolation -e $ESM_WATERMASSES
 # cp $SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin/esm_watermasses $SPACK/var/spack/environments/e3sm-env/.spack-env/view/bin/esm_watermasses.py
 
 
