@@ -60,7 +60,7 @@ packages:
 module unload PrgEnv-gnu/8.5.0
 export PATH=$HOME/bin:$PSCRATCH/software/mpich-4.3.0/install/bin:$PATH
 export LD_LIBRARY_PATH=$PSCRATCH/software/mpich-4.3.0/install/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$LD_LIBRARY_PATHj
+export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$LD_LIBRARY_PATH
 ```
 
 -----
@@ -91,7 +91,7 @@ spack repo add wilkins
 
 Add the esm_watermasses repository to your Spack installation
 ```
-spack repo add esm_watermasses
+spack repo add /path/to/e3sm-workflow/esm_watermasses
 ```
 
 ### Set up the Spack environment for e3sm-workflow
